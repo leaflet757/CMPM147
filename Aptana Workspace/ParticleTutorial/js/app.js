@@ -66,7 +66,7 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
                 //g.background(.65);
 
                 // or with 3 for HSB (or whatever color mode you are using)
-                g.background(0.53, 1, .7);
+                //g.background(0.53, 1, .7);
 
                 // You can even have a background that is *transparent*
                 // g.background(0, 0, 0, 0);
@@ -104,11 +104,11 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
                     // Update time
                     time.updateTime();
 					
-					g.fill(0.5,.2,.1,.01);
-					g.rect(0,0,w,h);
+					//g.fill(0.5,.2,.1,.01);
+					//g.rect(0,0,w,h);
 					
-					g.fill(hue,1,1,0);
-					hue = (hue+0.01)%1;
+					//g.fill(hue,1,1,0);
+					//hue = (hue+0.01)%1;
 					//radius = (radius*1.01)%50+5
 					
 					particles.forEach(function(p) 
@@ -168,13 +168,15 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
                         break;
                     case '1':
                         // Do something
+                        console.log('key 1 is pressed');
                         break;
-
                     case '2':
                         // Do something
+                        console.log('key 2 is pressed');
                         break;
                     case '3':
                         // Do something
+                        console.log('key 3 is pressed');
                         break;
                 }
 
