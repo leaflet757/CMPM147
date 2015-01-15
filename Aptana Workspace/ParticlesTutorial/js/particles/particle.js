@@ -38,13 +38,19 @@ define(["inheritance", "common"], function(_inheritance, common) {'use strict';
 			{
 				var pct = i/5;
 				var r = this.radius*(1-pct);
-				g.fill(0.6-i*0.02, 1-pct, 1);
+				g.fill(0, 1-pct, 1-pct);
 				g.ellipse(this.position.x, this.position.y, r, r);
 			}
 			
 			g.stroke(.2);
-			this.position.drawArrow(g, this.acceleration, 0.5);
+			//this.position.drawArrow(g, this.acceleration, 0.5);
 			
+        },
+        
+        // used for debugging 
+        setVel: function(xvel,yvel)
+        {
+        	this.velocity = new Vector(xvel, yvel);
         },
     });
 

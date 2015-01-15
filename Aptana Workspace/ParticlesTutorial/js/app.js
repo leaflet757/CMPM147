@@ -1,5 +1,8 @@
 var app = {};
 var particles = [];
+var circleParticle = {};
+var lineFollower = {};
+var pentagramRadius = 200;
 
 // A holder for lots of app-related functionality
 define(["processing", "./particles/particleSystem", "./particles/flower", "./particles/particle"], function(_processing, ParticleSystem, Flower, Particle) {'use strict';
@@ -56,6 +59,8 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
         init : function() {
             console.log("Hello, World.");
 
+			pentagramRadius = 200;
+			
             // Get the canvas element
             // Note that this is the jquery selector, and not the DOM element (which we need)
             // myJQuerySelector.get(0) will return the canvas element to pass to processing
@@ -68,6 +73,8 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
                 var w = canvas.width();
                 var h = canvas.height();
                 app.dimensions.setTo(w, h);
+	
+				console.log(w, h);
 
                 g.size(w, h);
 
@@ -91,7 +98,7 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 
                 // Set processing's draw function
 
-                g.background(.14, .4, .9);
+                g.background(0.7, .6, .9);
 
                 // [TODO] Create a particle here
 				for (var i = 0; i < 100; i++)
@@ -100,6 +107,8 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 				}
 				
 				//var particle = new Particle();
+				circleParticle.position = new Vector(200, 0);
+				lineFollower.position = new Vector(200, 0);
 
                 for (var i = 0; i < 50; i++) {
                     //randomDot(g);
@@ -111,22 +120,39 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 
                     // [TODO] Update a particle here
 
-                    g.fill(.5, .2, .1, .01);
+                    g.fill(0.7, .6, .9, .01);
                     g.rect(0, 0, w, h);
+                    
+                    // draw the circle and the pentagram
+                    g.fill(0,1,1,0);
+                    g.ellipse(w/2,h/2,pentagramRadius,pentagramRadius);
+                    g.line(200 + w/2, 0 + h/2,-161.803 + w/2,117.557 + h/2);
+                    g.line(-161.803 + w/2,117.557 + h/2, 61.803 + w/2, -190.211 + h/2);
+                    g.line(61.803 + w/2, -190.211 + h/2, 61.803 + w/2, 190.211 + h/2);
+                    g.line(61.803 + w/2, 190.211 + h/2, -161.803 + w/2, -117.557 + h/2);
+                    g.line(-161.803 + w/2, -117.557 + h/2, 200 + w/2, 0 + h/2);
 
                     // Move to the center of the canvas
                     g.pushMatrix();
                     g.translate(w / 2, h / 2);
 
-                    // [TODO] Draw a particle here
+                    // [TODO] Draw a particle here                    
 					for (var i =0; i < particles.length; i++)
 					{
-						particles[i].update(time);
-						particles[i].draw(g);
+						//particles[i].update(time);
+						//particles[i].draw(g);
 					}
 					//particle.update(time);
 					//particle.draw(g);
 					
+					g.fill(0.4, 1,1);
+					g.ellipse(circleParticle.position.x, circleParticle.position.y, 5, 5);
+					var theta = time.total * 0.3 % (2 * Math.PI);
+					circleParticle.position = new Vector(pentagramRadius * Math.cos(theta), -pentagramRadius * Math.sin(theta));
+					
+
+					g.fill(.6, 1,1);
+					g.ellipse(lineFollower.position.x, lineFollower.position.y, 5, 5);
 
                     g.popMatrix();
 
