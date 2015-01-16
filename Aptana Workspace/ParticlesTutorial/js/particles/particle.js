@@ -1,4 +1,31 @@
 define(["inheritance", "common"], function(_inheritance, common) {'use strict';
+    var LineFollower = Class.extend({
+        init : function(x,y,t) {
+			this.position = new Vector(x,y);
+			this.theta = t;
+			this.radius = 5;
+        },
+
+        update : function(time) {
+			this.theta = time.total * 0.3 % (2 * Math.PI);
+			
+			this.position = convertThetaToPentagram(theta);
+			
+        },
+
+        draw : function(g) {
+			g.fill(.6, 1,1);
+			g.noStroke();
+			g.ellipse(this.position.x, this.position.y, this.radius, this.radius)
+
+        },
+        
+    });
+
+    return LineFollower;
+});
+
+define(["inheritance", "common"], function(_inheritance, common) {'use strict';
     var Particle = Class.extend({
         init : function() {
 			this.position = new Vector(Math.random() * 200 - 100, Math.random() * 200 - 100);
@@ -11,7 +38,6 @@ define(["inheritance", "common"], function(_inheritance, common) {'use strict';
         // Figure out the forces on the particle, how to change the velocity, 
         // and then move it somewhere.  The Vector library has many functions that may be useful here
         update : function(time) {
-			
 			
 			this.acceleration = new Vector(this.position);
 			//this.acceleration.mult(-1);
@@ -56,3 +82,6 @@ define(["inheritance", "common"], function(_inheritance, common) {'use strict';
 
     return Particle;
 });
+
+
+

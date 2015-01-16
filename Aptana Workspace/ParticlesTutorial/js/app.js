@@ -2,6 +2,7 @@ var app = {};
 var particles = [];
 var circleParticle = {};
 var lineFollower = {};
+var lineFollowers = [];
 var pentagramRadius = 200;
 
 // A holder for lots of app-related functionality
@@ -108,7 +109,7 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 				
 				//var particle = new Particle();
 				circleParticle.position = new Vector(200, 0);
-				lineFollower.position = new Vector(200, 0);
+				lineFollower = new LineFollower(200, 0, 0);
 
                 for (var i = 0; i < 50; i++) {
                     //randomDot(g);
@@ -151,8 +152,8 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 					circleParticle.position = new Vector(pentagramRadius * Math.cos(theta), -pentagramRadius * Math.sin(theta));
 					
 
-					g.fill(.6, 1,1);
-					g.ellipse(lineFollower.position.x, lineFollower.position.y, 5, 5);
+					lineFollower.update(time);
+					lineFollower.draw(g);
 
                     g.popMatrix();
 
