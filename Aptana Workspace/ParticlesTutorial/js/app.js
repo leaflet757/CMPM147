@@ -1,8 +1,9 @@
 var app = {};
 var particles = [];
 var circleParticle = {};
-var lineFollower = {};
+//var lineFollower = {};
 var lineFollowers = [];
+var numLineFollowers = 100;
 var pentagramRadius = 200;
 
 // A holder for lots of app-related functionality
@@ -109,7 +110,14 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 				
 				//var particle = new Particle();
 				circleParticle.position = new Vector(200, 0);
-				lineFollower = new LineFollower(200, 0, 0);
+				//lineFollower = new Particle.LineFollower(200, 0, 0);
+				for (var i = 0; i < numLineFollowers; i++)
+				{
+					var t = 2 * Math.PI / numLineFollowers * i;
+					var p = convertThetaToPentagram(t);
+					//console.log(p);
+					lineFollowers[i] = new Particle.LineFollower(p.x, p.y, t);	
+				}
 
                 for (var i = 0; i < 50; i++) {
                     //randomDot(g);
@@ -152,8 +160,13 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 					circleParticle.position = new Vector(pentagramRadius * Math.cos(theta), -pentagramRadius * Math.sin(theta));
 					
 
-					lineFollower.update(time);
-					lineFollower.draw(g);
+					//lineFollower.update(time);
+					//lineFollower.draw(g);
+					for (var i = 0; i < lineFollowers.length; i++)
+					{
+						lineFollowers[i].update(time);
+						lineFollowers[i].draw(g);
+					}
 
                     g.popMatrix();
 

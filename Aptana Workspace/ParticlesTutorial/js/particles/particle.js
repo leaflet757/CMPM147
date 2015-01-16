@@ -1,31 +1,4 @@
 define(["inheritance", "common"], function(_inheritance, common) {'use strict';
-    var LineFollower = Class.extend({
-        init : function(x,y,t) {
-			this.position = new Vector(x,y);
-			this.theta = t;
-			this.radius = 5;
-        },
-
-        update : function(time) {
-			this.theta = time.total * 0.3 % (2 * Math.PI);
-			
-			this.position = convertThetaToPentagram(theta);
-			
-        },
-
-        draw : function(g) {
-			g.fill(.6, 1,1);
-			g.noStroke();
-			g.ellipse(this.position.x, this.position.y, this.radius, this.radius)
-
-        },
-        
-    });
-
-    return LineFollower;
-});
-
-define(["inheritance", "common"], function(_inheritance, common) {'use strict';
     var Particle = Class.extend({
         init : function() {
 			this.position = new Vector(Math.random() * 200 - 100, Math.random() * 200 - 100);
@@ -48,7 +21,6 @@ define(["inheritance", "common"], function(_inheritance, common) {'use strict';
 			this.position.addMultiple(this.velocity, time.elapsed);
 			
         },
-
 
 
         // Draw the particle to the screen.  'g' is the processing drawing object
@@ -79,9 +51,83 @@ define(["inheritance", "common"], function(_inheritance, common) {'use strict';
         	this.velocity = new Vector(xvel, yvel);
         },
     });
+    
+    var LineFollower = Class.extend({
+        init : function(x,y,t) {
+			this.position = new Vector(x,y);
+			this.theta = t;
+			this.radius = 5;
+        },
+
+        update : function(time) {
+			this.theta = (this.theta + time.total * 0.3) % (2 * Math.PI);
+			
+			this.position = convertThetaToPentagram(this.theta);
+			
+        },
+
+        draw : function(g) {
+			g.fill(.6, 1,1);
+			g.noStroke();
+			g.ellipse(this.position.x, this.position.y, this.radius, this.radius)
+
+        },
+        
+    });
+    Particle.LineFollower = LineFollower;
+    
+    var ParticleFollower = Class.extend({
+        init : function(x,y,t) {
+			this.position = new Vector(x,y);
+			this.theta = t;
+			this.radius = 5;
+        },
+
+        update : function(time) {
+			this.theta = (this.theta + time.total * 0.3) % (2 * Math.PI);
+			
+			this.position = convertThetaToPentagram(this.theta);
+			
+        },
+
+        draw : function(g) {
+			g.fill(.6, 1,1);
+			g.noStroke();
+			g.ellipse(this.position.x, this.position.y, this.radius, this.radius)
+
+        },
+        
+    });
+    Particle.ParticleFollower = ParticleFollower;
 
     return Particle;
 });
-
+// 
+// define(["inheritance", "common"], function(_inheritance, common) {'use strict';
+    // var LineFollower = Class.extend({
+        // init : function(x,y,t) {
+			// this.position = new Vector(x,y);
+			// this.theta = t;
+			// this.radius = 5;
+        // },
+// 
+        // update : function(time) {
+			// this.theta = time.total * 0.3 % (2 * Math.PI);
+// 			
+			// this.position = convertThetaToPentagram(theta);
+// 			
+        // },
+// 
+        // draw : function(g) {
+			// g.fill(.6, 1,1);
+			// g.noStroke();
+			// g.ellipse(this.position.x, this.position.y, this.radius, this.radius)
+// 
+        // },
+//         
+    // });
+// 
+    // return LineFollower;
+// });
 
 
