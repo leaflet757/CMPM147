@@ -76,24 +76,42 @@ define(["inheritance", "common"], function(_inheritance, common) {'use strict';
     });
     Particle.LineFollower = LineFollower;
     
-    var ParticleFollower = Class.extend({
-        init : function(x,y,t) {
-			this.position = new Vector(x,y);
-			this.theta = t;
-			this.radius = 5;
+    var ParticleFollower = Particle.extend({
+    	
+    	init : function(lineFollower) {
+    		this.position = new Vector(lineFollower.position.x + Math.random() * 10 - 5, lineFollower.position.y + Math.random() * 10 - 5);
+			//this.velocity = new Vector(Math.random() * 10 - 5, Math.random() * 10 - 5);
+			this.velocity = Vector.polar(8, Math.random()*2*Math.PI);
+			// this.acceleration = new Vector(0, Math.random() * 2 * Math.PI);
+			this.radius = Math.random() * 5 + 5;
+			this.lineFollower = lineFollower;
         },
 
         update : function(time) {
-			this.theta = (this.theta + time.total * 0.3) % (2 * Math.PI);
+			this.acceleration = new Vector(this.position);
+			//this.acceleration.mult(-1);
+			//this.acceleration.setToDifference(this.lineFollower.position, this.position);
+			this.acceleration.setToDifference(this.lineFollower.position, this.position);
 			
-			this.position = convertThetaToPentagram(this.theta);
+			this.velocity.addMultiple(this.acceleration, time.elapsed);
+			this.position.addMultiple(this.velocity, time.elapsed);
 			
         },
 
         draw : function(g) {
-			g.fill(.6, 1,1);
+			g.fill(0.8,1,1);
 			g.noStroke();
-			g.ellipse(this.position.x, this.position.y, this.radius, this.radius)
+			//g.ellipse(this.position.x, this.position.y, 15, 15);
+			for (var i = 0; i < 5; i++)
+			{
+				var pct = i/5;
+				var r = this.radius*(1-pct);
+				g.fill(0, 1-pct, 1-pct);
+				g.ellipse(this.position.x, this.position.y, r, r);
+			}
+			
+			g.stroke(.2);
+			//this.position.drawArrow(g, this.acceleration, 0.5);
 
         },
         

@@ -105,7 +105,7 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
                 // [TODO] Create a particle here
 				for (var i = 0; i < 100; i++)
 				{
-					particles[i] = new Particle();
+					//particles[i] = new Particle();
 				}
 				
 				//var particle = new Particle();
@@ -117,6 +117,10 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 					var p = convertThetaToPentagram(t);
 					//console.log(p);
 					lineFollowers[i] = new Particle.LineFollower(p.x, p.y, t);	
+					for (var j = 0; j < 10; j++)
+					{
+						particles[i + j] = new Particle.ParticleFollower(lineFollowers[i]);
+					}
 				}
 
                 for (var i = 0; i < 50; i++) {
@@ -148,10 +152,11 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
                     // [TODO] Draw a particle here                    
 					for (var i =0; i < particles.length; i++)
 					{
-						//particles[i].update(time);
-						//particles[i].draw(g);
+						particles[i].update(time);
+						particles[i].draw(g);
 					}
 					//particle.update(time);
+					//console.log(app.mouse);
 					//particle.draw(g);
 					
 					g.fill(0.4, 1,1);
@@ -164,8 +169,9 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 					//lineFollower.draw(g);
 					for (var i = 0; i < lineFollowers.length; i++)
 					{
+						//console.log(lineFollowers[i].position);
 						lineFollowers[i].update(time);
-						lineFollowers[i].draw(g);
+						//lineFollowers[i].draw(g);
 					}
 
                     g.popMatrix();

@@ -6,6 +6,7 @@ function testHello()
 function convertThetaToPentagram(theta)
 {
 	var point = {};
+	point.z = 0;
 	
 	if (theta >= 8 * Math.PI / 5)
 	{
