@@ -69,7 +69,7 @@ define(["inheritance", "common"], function(_inheritance, common) {'use strict';
         draw : function(g) {
 			g.fill(.6, 1,1);
 			g.noStroke();
-			g.ellipse(this.position.x, this.position.y, this.radius, this.radius)
+			g.ellipse(this.position.x, this.position.y, this.radius, this.radius);
 
         },
         
@@ -120,32 +120,3 @@ define(["inheritance", "common"], function(_inheritance, common) {'use strict';
 
     return Particle;
 });
-// 
-// define(["inheritance", "common"], function(_inheritance, common) {'use strict';
-    // var LineFollower = Class.extend({
-        // init : function(x,y,t) {
-			// this.position = new Vector(x,y);
-			// this.theta = t;
-			// this.radius = 5;
-        // },
-// 
-        // update : function(time) {
-			// this.theta = time.total * 0.3 % (2 * Math.PI);
-// 			
-			// this.position = convertThetaToPentagram(theta);
-// 			
-        // },
-// 
-        // draw : function(g) {
-			// g.fill(.6, 1,1);
-			// g.noStroke();
-			// g.ellipse(this.position.x, this.position.y, this.radius, this.radius)
-// 
-        // },
-//         
-    // });
-// 
-    // return LineFollower;
-// });
-
-
