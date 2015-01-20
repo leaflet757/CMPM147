@@ -42,44 +42,34 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 		g.endShape(g.CLOSE);
 	}
 
-	function pixelSharpen(g) {
-		var filterWidth = 3;
-		var filterHeight = 3;
-		var filter = [[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]];
-		var factor = 1.0;
-		var bias = 0.0;
-
-		var w = g.width();
-		var h = g.height();
-
-		g.loadPixels();
-
-		var image = g.pixels.toArray();
-		var result = [];
-
-		//apply the filter
-		for (var x = 0; x < w; x++)
-			for (var y = 0; y < h; y++) {
-				var red = 0.0,
-				    green = 0.0,
-				    blue = 0.0;
-
-				//multiply every value of the filter with corresponding image pixel
-				for (var filterX = 0; filterX < filterWidth; filterX++)
-					for (var filterY = 0; filterY < filterHeight; filterY++) {
-						var imageX = (x - filterWidth / 2 + filterX + w) % w;
-						var imageY = (y - filterHeight / 2 + filterY + h) % h;
-						red += image[imageX + imageY].r * filter[filterX][filterY];
-						green += image[imageX + imageY].g * filter[filterX][filterY];
-						blue += image[imageX + imageY].b * filter[filterX][filterY];
-					}
-
-				//truncate values smaller than zero and larger than 255
-				result[x + y].r = Math.min(Math.max(factor * red + bias, 0), 255);
-				result[x + y].g = Math.min(Math.max(factor * green + bias, 0), 255);
-				result[x + y].b = Math.min(Math.max(factor * blue + bias, 0), 255);
-			}
+	function pixelZoom(g) {
+		
+		// TODO: implement tihs fukken thing
+		
 		g.pixels.set(result);
+		g.updatePixels();
+	}
+
+	function pixelSwapper(g) {
+		var offset = Math.floor(Math.random() * 100);
+		var MAX_SIZE = g.width / 2 * g.height / 2;
+		
+		// TODO: ITS BROKEN ;DDDDD
+		
+		var width = Math.floor(Math.random() * g.width / 2);
+		var heightContraint = Math.min(g.height / 2, MAX_SIZE / width);
+		var height = Math.floow(Math.random() * heightContraint);
+		
+		var x = Math.floor(Math.random() * (g.width - width));
+		var y = Math.floor(Math.random() * (g.height - height));
+		
+		var pixelArray = g.pixels.toArray();
+		for (var i = 0; i < 1000; i++) {
+			var index = x + y * g.width + i;
+			pixelArray[index] = pixelArray[index + offset];
+		}
+		
+		g.pixels.set(pixelArray);
 		g.updatePixels();
 	}
 
@@ -185,8 +175,8 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 						randomShape(g);
 					}
 					if (app.key === 2) {
-						pixelStreak(g);
-						//pixelSharpen(g);
+						//pixelStreak(g);
+						pixelSwapper(g);
 					}
 					if (app.key === 3) {
 						// Move to the center of the canvas
@@ -194,6 +184,10 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 						g.translate(w / 2, h / 2);
 						drawStar(g);
 						g.popMatrix();
+					}
+					if (app.key === 4)
+					{
+						pixelZoom(g);				
 					}
 
 				};
@@ -247,6 +241,9 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 				case '3':
 					app.key = 3;
 					// Do something
+					break;
+				case '4':
+					app.key = 4;
 					break;
 				}
 
