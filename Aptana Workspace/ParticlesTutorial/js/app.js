@@ -28,7 +28,7 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 	function randomShape(g) {
 		var x = Math.floor(Math.random() * g.width);
 		var y = Math.floor(Math.random() * g.height);
-		g.fill(Math.random(), 1, 1, .4);
+		g.fill(Math.random(), 1, 1, Math.random() * 0.4 + 0.6);
 		g.noStroke();
 		var npoints = Math.random() * 5 + 3;
 		var angle = 2 * Math.PI / npoints;
@@ -44,32 +44,49 @@ define(["processing", "./particles/particleSystem", "./particles/flower", "./par
 
 	function pixelZoom(g) {
 		
-		// TODO: implement tihs fukken thing
+		// TODO:
 		
 		g.pixels.set(result);
 		g.updatePixels();
 	}
 
 	function pixelSwapper(g) {
-		var offset = Math.floor(Math.random() * 100);
-		var MAX_SIZE = g.width / 2 * g.height / 2;
 		
-		// TODO: ITS BROKEN ;DDDDD
-		
-		var width = Math.floor(Math.random() * g.width / 2);
-		var heightContraint = Math.min(g.height / 2, MAX_SIZE / width);
-		var height = Math.floow(Math.random() * heightContraint);
-		
-		var x = Math.floor(Math.random() * (g.width - width));
-		var y = Math.floor(Math.random() * (g.height - height));
-		
+		g.loadPixels();
 		var pixelArray = g.pixels.toArray();
-		for (var i = 0; i < 1000; i++) {
-			var index = x + y * g.width + i;
-			pixelArray[index] = pixelArray[index + offset];
-		}
 		
-		g.pixels.set(pixelArray);
+		var x = Math.floor(Math.random() * (g.width / 2));
+		var x2 = x + g.width / 2;
+		var y = Math.floor(Math.random() * (g.height / 2));
+		
+		var width = Math.floor(Math.random() * ((g.width / 2) - (x % g.width)));
+		var height = Math.floor(Math.random() * (g.height - y));
+		//console.log(x, y, width, height);
+		
+        // Iterate through all the pixels of a w by h rectangle, starting at (x, y)
+        for (var i = 0; i < width; i++) {
+            for (var j = 0; j < height; j++) {
+                // Convert the x, y coordinates into the position in the 1 dimensional array of the buffer
+                var index = (x + i) + (y + j) * g.width;
+                var index2 = (x2 + i) + (y + j) * g.width;
+
+                // Read the hue saturation and brightness of the color at this pixel
+                var color = pixelArray[index];
+                var color2 = pixelArray[index2];
+                var hue = g.hue(color);
+                var hue2 = g.hue(color2);
+                var saturation = g.saturation(color);
+                var sat2 = g.saturation(color2);
+                var brightness = g.brightness(color);
+                var brightness2 = g.brightness(color2);
+                
+                // and use it to make a new color
+                pixelArray[index] = g.color(hue2, sat2, brightness2);
+                pixelArray[index2] = g.color(hue, saturation, brightness);
+            }
+        }
+        
+        g.pixels.set(pixelArray);
 		g.updatePixels();
 	}
 
