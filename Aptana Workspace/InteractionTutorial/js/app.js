@@ -97,7 +97,7 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
         init : function() {
             app.particles = [];
 
-           audio.startAudio();
+           	audio.startAudio();
             //audio.captureMic();
             // add audio particles
             for (var i = 0; i < 20; i++) {
