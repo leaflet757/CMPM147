@@ -1,7 +1,7 @@
 var app = {};
 
 // A holder for lots of app-related functionality
-define(["processing", "./drawing", "./threeUtils/threeScene", "common", "./particles/particle"], function(_processing, drawing, ThreeScene, common, Particle) {'use strict';
+define(["processing", "./drawing", "./threeUtils/threeScene", "common", "./particles/particle", "interaction/leapMotion"], function(_processing, drawing, ThreeScene, common, Particle, leap) {'use strict';
 
     // A little time object to keep track of the current time,
     //   how long its been since the last frame we drew,
@@ -50,6 +50,9 @@ define(["processing", "./drawing", "./threeUtils/threeScene", "common", "./parti
                 }
                 // This function is called once processing is initialized.
 
+				// Initialize the Leap Fingers
+				leap.createFingers();
+
                 // Set the size of processing so that it matches that size of the canvas element
                 var w = canvas.width();
                 var h = canvas.height();
@@ -85,6 +88,16 @@ define(["processing", "./drawing", "./threeUtils/threeScene", "common", "./parti
                     for (var i = 0; i < app.particles.length; i++) {
                         app.particles[i].draw(g);
                     }
+                    
+                    // Draw the fingers
+                    if (app.fingers) {
+                        // for (var i = 0; i < app.fingers.length; i++) {
+                        	// g.stroke(i * .1, .4, 1, .2);
+                            // g.noFill();
+                            // app.fingers[i].drawCircle(g, 10);
+                        // }
+                    }
+                    
                     g.popMatrix();
 
                 };

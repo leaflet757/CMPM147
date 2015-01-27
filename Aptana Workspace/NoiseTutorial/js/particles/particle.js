@@ -86,6 +86,47 @@ define(["inheritance", "common"], function(_inheritance, common) {'use strict';
 
         },
     });
+    
+    var AttractedParticle = Particle.extend({
+        init : function(target, attractionForce) {
+            this.target = target;
+            this.attractionForce = attractionForce;
+            this._super();
+        },
+
+        update : function(time) {
+
+            this.lastPosition.setTo(this.position);
+            this.acceleration.setToDifference(this.target, this.position);
+            this.acceleration.mult(this.attractionForce);
+
+            this.velocity.addMultiple(this.acceleration, time.elapsed);
+
+            // some damping
+            this.velocity.mult(.93);
+
+            this.position.addMultiple(this.velocity, time.elapsed);
+        },
+
+        draw : function(g) {
+            g.fill(.8, 1, 1);
+            g.noStroke();
+
+            for (var i = 0; i < 3; i++) {
+                var pct = i / 5;
+                var r = this.radius * (1 - pct);
+                g.fill((.2 + .2 * pct + this.id * .05) % 1, 1 - pct, 1);
+                g.ellipse(this.position.x + .2, this.position.y, r, r);
+            }
+
+            g.strokeWeight(1);
+            g.stroke(1, 0, 1, .2);
+            this.position.drawLineTo(g, this.target);
+
+        },
+    });
+
+	Particle.AttractedParticle = AttractedParticle;
 
     return Particle;
 });
