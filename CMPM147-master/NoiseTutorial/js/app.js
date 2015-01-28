@@ -75,7 +75,7 @@ define(["processing", "./drawing", "./threeUtils/threeScene", "common", "./parti
 
                     // Update time
                     app.time.updateTime();
-                   // drawing.drawGrid(g);
+					//drawing.drawGrid(g);
                     for (var i = 0; i < app.particles.length; i++) {
                         app.particles[i].update(app.time);
                     }
