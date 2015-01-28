@@ -236,6 +236,7 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 			// points on the left and right side of screen
 			app.drawStates = [false, false, false];
 			app.erase = false;
+			app.drawFollowers = false;
 
 			//audio.startAudio();
 			//audio.captureMic();
@@ -321,8 +322,23 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 
 					// [TODO] Draw a particle here
 
-					for (var i = 0; i < app.particles.length; i++) {
-						//app.particles[i].draw(g);
+					if (app.drawFollowers) {
+
+						for (var i = 0; i < app.particles.length; i++) {
+							app.particles[i].draw(g);
+						}
+
+					}
+
+					if (time.frames % 5 == 0) {
+						for (var i = 0; i < app.fingerColors.length; i++) {
+							var hue = (app.fingerColors[i].h + 0.01) % 1;
+							app.fingerColors[i].h = hue;
+						}
+						for (var i = 0; i < app.sideColors.length; i++) {
+							var hue = (app.sideColors[i].h + +0.01) % 1;
+							app.sideColors[i].h = hue;
+						}
 					}
 
 					var splits = 1;
@@ -440,6 +456,13 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 					app.drawStates[1] = false;
 					app.drawStates[2] = true;
 					break;
+				case 'F':
+					app.drawStates[0] = false;
+					app.drawStates[1] = false;
+					app.drawStates[2] = false;
+					break;
+				case 'G':
+					app.drawFollowers = !app.drawFollowers;
 				case 'C':
 					app.erase = !app.erase;
 					break;
