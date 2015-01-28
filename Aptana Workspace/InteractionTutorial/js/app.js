@@ -120,7 +120,7 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 			var rectx = i * rectw;
 			var recty = -recth;
 			g.noStroke();
-			app.fingerColors[i].fill(g, 0, 0);
+			app.fingerColors[i].fill(g, 0.3, 0);
 			g.rect(rectx, recty, rectw, recth);
 			if (recth < 0) {
 				app.fingerColors[i] = new common.KColor(utilities.noise(rectx, recty), 1, 1);
@@ -134,31 +134,40 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 		// app.sidePoints
 		g.pushMatrix();
 		//g.translate(-w / 2 + 100, h/2);
-		var lineScale = 1;
+		var lineScale = 3;
 		//var translation = new Vector(-100, 100);
 		for (var i = 0; i <= app.fingersOnScreen; i++) {
 			g.noStroke();
 			g.beginShape();
 			if (i == 0) {
-				app.fingerColors[i].fill(g, 0, 0);
+				app.sideColors[0].fill(g, 0.3, 0);
 				g.vertex(-w / 2, h / 2);
-				g.vertex(-w / 2, app.sidePoints[0].y * lineScale);
-				g.vertex(app.points[i].x, app.points[i].y * lineScale);
+				g.vertex(-w / 2, h / 2);
+				g.vertex(app.points[i].x, app.points[i].y * lineScale + h / 2);
 				g.vertex(app.points[i].x, h / 2);
+				if (app.points[i].y > 0) {
+					app.sideColors[0] = new common.KColor(Math.random(), 1,1);
+				}
 			} else if (i == splits) {
-				app.sideColors[1].fill(g, 0, 0);
+				app.fingerColors[i - 1].fill(g, 0.3, 0);
 				g.vertex(app.points[i - 1].x, h / 2);
-				g.vertex(app.points[i - 1].x, app.points[i - 1].y * lineScale);
-				g.vertex(app.sidePoints[1].x, app.sidePoints[1].y * lineScale);
-				g.vertex(app.sidePoints[1].x, h / 2);
+				g.vertex(app.points[i - 1].x, app.points[i - 1].y * lineScale + h / 2);
+				g.vertex(w / 2, h / 2);
+				g.vertex(w / 2, h / 2);
+				if (app.points[i - 1].y > 0) {
+					app.fingerColors[i-1] = new common.KColor(Math.random(), 1,1);
+				}
 			}
 			// do other stuff
 			else {
-				app.fingerColors[i].fill(g, 0, 0);
+				app.fingerColors[i - 1].fill(g, 0.3, 0);
 				g.vertex(app.points[i - 1].x, h / 2);
-				g.vertex(app.points[i - 1].x, app.points[i - 1].y * lineScale);
-				g.vertex(app.points[i].x, app.points[i].y * lineScale);
+				g.vertex(app.points[i - 1].x, app.points[i - 1].y * lineScale + h / 2);
+				g.vertex(app.points[i].x, app.points[i].y * lineScale + h / 2);
 				g.vertex(app.points[i].x, h / 2);
+				if (app.points[i].y > 0) {
+					app.fingerColors[i] = new common.KColor(Math.random(), 1,1);
+				}
 			}
 			g.endShape(g.CLOSE);
 		}
