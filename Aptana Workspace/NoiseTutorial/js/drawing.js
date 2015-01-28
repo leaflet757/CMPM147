@@ -44,6 +44,8 @@ define(["./particles/particle", "common"], function(Particle, common) {'use stri
             var spacing = 25;
             var rows = Math.round(h / spacing) + 1;
             var columns = Math.round(w / spacing) + 1;
+            
+            var color = new common.KColor(0.5,1,1);
 
             // Iterate through all the pixels of a w by h rectangle, starting at (x, y)
             for (var i = 0; i < rows; i++) {
@@ -53,7 +55,9 @@ define(["./particles/particle", "common"], function(Particle, common) {'use stri
                     var x = j * spacing;
 
                     g.noStroke();
-                    g.fill(Math.random(), .7, 1);
+                    //g.fill(Math.random(), .7, 1);
+                    color = new common.KColor(utilities.noise(x,y,.05),1,1);
+                    color.fill(g,0,0);
                     g.rect(x, y, r, r);
 
                 }

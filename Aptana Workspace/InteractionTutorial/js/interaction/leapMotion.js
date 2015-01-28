@@ -16,11 +16,13 @@ define(["inheritance", "common", "../particles/particle"], function(_inheritance
         var output = $("#output");
         Leap.loop(function(frame) {
             var outputData = "";
+            var amt = 0;
             frame.hands.forEach(function(hand, handIndex) {
                 hand.fingers.forEach(function(finger, fingerIndex) {
                     var p = finger.tipPosition;
                     var index = fingerIndex + handIndex * 5;
-
+                    amt++;
+	
                     app.fingers[index].setTo(p[0], -p[1], p[2]);
                     app.fingers[index].mult(2);
                     app.fingers[index].y += 200;
@@ -28,9 +30,9 @@ define(["inheritance", "common", "../particles/particle"], function(_inheritance
                 });
 
             });
-
+			app.fingersOnScreen = amt;
             output.html("frame " + frame.id + "<br>" + outputData);
-
+			
         });
     }
 

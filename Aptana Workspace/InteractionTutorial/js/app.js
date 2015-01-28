@@ -89,6 +89,86 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 		}
 	};
 
+	function sortFingers() {
+		for (var i = 0; i < app.fingersOnScreen; i++) {
+			app.points[i] = app.fingers[i].clone();
+		}
+		var tempVec = new Vector();
+		for (var i = 1; i < app.points.length; i++) {
+			var j = i;
+			while (j > 0) {
+				if (app.points[j - 1].x > app.points[j].x) {
+					tempVec.setTo(app.points[j]);
+					app.points[j].setTo(app.points[j - 1]);
+					app.points[j - 1].setTo(tempVec);
+				}
+				j--;
+			}
+		}
+		app.sidePoints[0].setTo(0, app.points[0].y / 2);
+		app.sidePoints[1].setTo(app.dimensions.x, app.points[app.points.length - 1].y / 2);
+	};
+
+	function drawRectangles(g, splits, w, h) {
+		g.pushMatrix();
+		g.translate(-w / 2, h / 2);
+		var rectScale = 3;
+		for (var i = 0; i < splits; i++) {
+			// draw the corresponding rectagles
+			var rectw = w / splits;
+			var recth = rectScale * -1 * app.points[i].y;
+			var rectx = i * rectw;
+			var recty = -recth;
+			g.noStroke();
+			app.fingerColors[i].fill(g, 0, 0);
+			g.rect(rectx, recty, rectw, recth);
+			if (recth < 0) {
+				app.fingerColors[i] = new common.KColor(utilities.noise(rectx, recty), 1, 1);
+			}
+		}
+		g.popMatrix();
+	};
+
+	function drawLines(g, splits, w, h) {
+		// app.points
+		// app.sidePoints
+		g.pushMatrix();
+		//g.translate(-w / 2 + 100, h/2);
+		var lineScale = 1;
+		//var translation = new Vector(-100, 100);
+		for (var i = 0; i <= app.fingersOnScreen; i++) {
+			g.noStroke();
+			g.beginShape();
+			if (i == 0) {
+				app.fingerColors[i].fill(g, 0, 0);
+				g.vertex(-w / 2, h / 2);
+				g.vertex(-w / 2, app.sidePoints[0].y * lineScale);
+				g.vertex(app.points[i].x, app.points[i].y * lineScale);
+				g.vertex(app.points[i].x, h / 2);
+			} else if (i == splits) {
+				app.sideColors[1].fill(g, 0, 0);
+				g.vertex(app.points[i - 1].x, h / 2);
+				g.vertex(app.points[i - 1].x, app.points[i - 1].y * lineScale);
+				g.vertex(app.sidePoints[1].x, app.sidePoints[1].y * lineScale);
+				g.vertex(app.sidePoints[1].x, h / 2);
+			}
+			// do other stuff
+			else {
+				app.fingerColors[i].fill(g, 0, 0);
+				g.vertex(app.points[i - 1].x, h / 2);
+				g.vertex(app.points[i - 1].x, app.points[i - 1].y * lineScale);
+				g.vertex(app.points[i].x, app.points[i].y * lineScale);
+				g.vertex(app.points[i].x, h / 2);
+			}
+			g.endShape(g.CLOSE);
+		}
+		g.popMatrix();
+	};
+
+	function drawCurves(g, splits, w, h) {
+
+	};
+
 	// Lets add some functions to the app object!
 	$.extend(app, {
 
@@ -98,6 +178,13 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 		init : function() {
 			app.particles = [];
 			app.fingerColors = [];
+			app.sideColors = [];
+			app.fingersOnScreen = 1;
+			app.points = [];
+			app.sidePoints = [new Vector(), new Vector()];
+			// points on the left and right side of screen
+			app.drawStates = [false, false, false];
+			app.erase = false;
 
 			//audio.startAudio();
 			//audio.captureMic();
@@ -108,11 +195,21 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 			// }
 
 			leap.createFingers();
-			
+
 			// Create random colors for each finger
-			for (var i = 0; i < app.fingers.length; i++) {
-				var t = Math.random();
-				app.fingerColors[i] = new common.KColor(t,1,1);
+			for (var i = 0; i < 10; i++) {
+				var hue = Math.random();
+				var sat = Math.random() * 0.3 + 0.7;
+				var bri = Math.random() * 0.3 + 0.7;
+				var tra = Math.random() * 0.1 + 0.7;
+				app.fingerColors[i] = new common.KColor(hue, sat, bri, tra);
+			}
+			for (var i = 0; i < 2; i++) {
+				var hue = Math.random();
+				var sat = Math.random() * 0.3 + 0.7;
+				var bri = Math.random() * 0.3 + 0.7;
+				var tra = Math.random() * 0.1 + 0.7;
+				app.sideColors[i] = new common.KColor(hue, sat, bri, tra);
 			}
 
 			// Get the canvas element
@@ -149,7 +246,7 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 
 				// Set processing's draw function
 
-				g.background(.84, .4, .2);
+				g.background(.84, .4, 0.8);
 
 				g.draw = function() {
 
@@ -162,8 +259,8 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 						app.particles[i].update(time);
 					}
 
-					if (time.frames % 5 == 0) {
-						g.fill(.5, .2, .1, 0.5);
+					if (time.frames % 5 == 0 && app.erase) {
+						g.fill(0, 0, 0.4, 0.7);
 						g.rect(0, 0, w, h);
 					}
 
@@ -178,32 +275,33 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 					}
 
 					var splits = 1;
-					var rectScale = 3;
-					
 
 					// Draw the fingers
 					if (app.fingers) {
-						splits = app.fingers.length;
-						for (var i = 0; i < app.fingers.length; i++) {
-							g.stroke(i * .1, .4, 1, .2);
-							g.noFill();
-							app.fingers[i].drawCircle(g, 10);
+						splits = app.fingersOnScreen;
+						if (app.erase) {
+							for (var i = 0; i < app.fingers.length; i++) {
+								g.stroke(i * .1, .4, 1, .2);
+								g.noFill();
+								app.fingers[i].drawCircle(g, 10);
 
-						}
-						for (var i = 0; i < splits; i++) {
-							// draw the corresponding rectagles
-							if (app.fingers[i]) {
-								var rectw = w / splits;
-								var recth = rectScale * -1 * app.fingers[i].y;
-								var rectx = i * rectw - w / 2;
-								var recty = h / 2 - recth;
-								app.fingerColors[i].fill(g, 0,0);
-								//g.fill(0, 1, 1);
-								g.rect(rectx, recty, rectw, recth);
-								if (recth < 0) {
-									app.fingerColors[i] = new common.KColor(Math.random(),1,1);
-								}
 							}
+						}
+						if (app.fingersOnScreen > 0) {
+							sortFingers();
+
+							if (app.drawStates[0]) {
+								drawRectangles(g, splits, w, h);
+							}
+
+							if (app.drawStates[1]) {
+								drawLines(g, splits, w, h);
+							}
+
+							if (app.drawStates[2]) {
+								drawCurves(g, splits, w, h);
+							}
+
 						}
 					}
 
@@ -275,6 +373,24 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 				case '3':
 					app.key = 3;
 					// Do something
+					break;
+				case 'A':
+					app.drawStates[0] = true;
+					app.drawStates[1] = false;
+					app.drawStates[2] = false;
+					break;
+				case 'S':
+					app.drawStates[0] = false;
+					app.drawStates[1] = true;
+					app.drawStates[2] = false;
+					break;
+				case 'D':
+					app.drawStates[0] = false;
+					app.drawStates[1] = false;
+					app.drawStates[2] = true;
+					break;
+				case 'C':
+					app.erase = !app.erase;
 					break;
 				}
 
