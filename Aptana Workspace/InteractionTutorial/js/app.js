@@ -109,6 +109,24 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 		app.sidePoints[1].setTo(app.dimensions.x, app.points[app.points.length - 1].y / 2);
 	};
 
+	function sortClosestFingers() {
+		for (var i = 0; i < app.fingersOnScreen; i++) {
+			app.closestPoints[i] = app.fingers[i].clone();
+		}
+		var tempVec = new Vector();
+		for (var i = 1; i < app.closestPoints.length; i++) {
+			var j = i;
+			while (j > 0) {
+				if (app.closestPoints[j - 1].x > app.closestPoints[j].x) {
+					tempVec.setTo(app.closestPoints[j]);
+					app.closestPoints[j].setTo(app.closestPoints[j - 1]);
+					app.closestPoints[j - 1].setTo(tempVec);
+				}
+				j--;
+			}
+		}
+	};
+
 	function drawRectangles(g, splits, w, h) {
 		g.pushMatrix();
 		g.translate(-w / 2, h / 2);
@@ -174,6 +192,28 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 		g.popMatrix();
 	};
 
+	function drawfingerShape(g, splits, w, h) {
+		var scale = 1.5;
+		//sortClosestFingers();
+		//g.strokeWeight(0.5);
+		//g.stroke(app.sideColors[1].toRGB());
+		//g.stroke(0.3, 1,1);
+		app.sideColors[1].fill(g, .3, 0);
+		for (var p = 0; p < splits / 5; p++) {
+
+			g.beginShape();
+			//g.vertex(scale*app.points[0].x, 1.5*scale*app.points[0].y);
+			var i = p * 5;
+			do {
+				g.curveVertex(scale * app.fingers[i].x, 1.5 * scale * app.fingers[i].y);
+				i++;
+			} while (i % 5 != 0);
+			
+			g.endShape(g.CLOSE);
+
+		}
+	};
+
 	function drawCurves(g, splits, w, h) {
 		// app.points
 		// app.sidePoints
@@ -232,9 +272,10 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 			app.sideColors = [];
 			app.fingersOnScreen = 1;
 			app.points = [];
+			app.closestPoints = [];
 			app.sidePoints = [new Vector(), new Vector()];
 			// points on the left and right side of screen
-			app.drawStates = [false, false, false];
+			app.drawStates = [false, false, false, false];
 			app.erase = false;
 			app.drawFollowers = false;
 
@@ -361,14 +402,16 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 								drawRectangles(g, splits, w, h);
 							}
 
-							if (app.drawStates[1]) {
-								drawLines(g, splits, w, h);
+							if (app.drawStates[3]) {
+								drawfingerShape(g, splits, w, h);
 							}
 
 							if (app.drawStates[2]) {
 								drawCurves(g, splits, w, h);
 							}
-
+							if (app.drawStates[1]) {
+								drawLines(g, splits, w, h);
+							}
 						}
 					}
 
@@ -443,28 +486,35 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 					break;
 				case 'A':
 					app.drawStates[0] = true;
-					app.drawStates[1] = false;
-					app.drawStates[2] = false;
+					//app.drawStates[1] = false;
+					//app.drawStates[2] = false;
+					//app.drawStates[3] = false;
 					break;
 				case 'S':
-					app.drawStates[0] = false;
+					//app.drawStates[0] = false;
 					app.drawStates[1] = true;
-					app.drawStates[2] = false;
+					//app.drawStates[2] = false;
+					//app.drawStates[3] = false;
 					break;
 				case 'D':
-					app.drawStates[0] = false;
-					app.drawStates[1] = false;
+					//app.drawStates[0] = false;
+					//app.drawStates[1] = false;
 					app.drawStates[2] = true;
+					//app.drawStates[3] = false;
 					break;
 				case 'F':
 					app.drawStates[0] = false;
 					app.drawStates[1] = false;
 					app.drawStates[2] = false;
+					app.drawStates[3] = false;
 					break;
 				case 'G':
 					app.drawFollowers = !app.drawFollowers;
 				case 'C':
 					app.erase = !app.erase;
+					break;
+				case 'H':
+					app.drawStates[3] = true;
 					break;
 				}
 
