@@ -194,7 +194,7 @@ define(["common", "./grids/grid", "./particles/particle"], function(common, Grid
 			var v2 = this.getLastValue(x, y - 1);
 			var v3 = this.getLastValue(x, y + 1);
 
-			return utilities.lerp((v0 + v1 + v2 + v3) / 4, v, .1);
+			return utilities.lerp((v0 + v1 + v2 + v3) / 4, v, .5);
 		},
 
 		// Custom drawing
@@ -217,8 +217,8 @@ define(["common", "./grids/grid", "./particles/particle"], function(common, Grid
 			for (var i = 0; i < 1000; i++) {
 
 				var color = new common.KColor((i * .023) % 1, .5 + .5 * utilities.noise(i * .02 + 5), 1);
+				// var center = new Vector(utilities.noise(i * .06) * 400 + 400, 300 * utilities.noise(.06 * i + 30) + 300);
 				var center = new Vector(utilities.noise(i * .06) * 400 + 400, 300 * utilities.noise(.06 * i + 30) + 300);
-				//var venter
 
 				var region = new Grid.Voronoi.Region(center, color);
 				this.regions[i] = region;
@@ -294,7 +294,7 @@ define(["common", "./grids/grid", "./particles/particle"], function(common, Grid
 				}
 
 				for (var i = 0; i < this.particles.length; i++) {
-					this.particles[i].update(app.time);
+					//this.particles[i].update(app.time);
 					region.idColor.fill(g, .3 * Math.sin(i));
 					this.particles[i].draw(g);
 				}

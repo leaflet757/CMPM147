@@ -101,11 +101,11 @@ define(["inheritance", "common"], function(_inheritance, common) {
 
         update : function(time) {
 			
-			// this.acceleration = new Vector(this.position);
-			// this.acceleration.setToDifference(this.position, this.position);
-// 			
-			// this.velocity.addMultiple(this.acceleration, time.elapsed);
-			// this.position.addMultiple(this.velocity, time.elapsed);
+			this.acceleration = new Vector(this.position);
+			this.acceleration.setToDifference(this.position, this.position);
+			
+			this.velocity.addMultiple(this.acceleration, time.elapsed);
+			this.position.addMultiple(this.velocity, time.elapsed);
 			
         },
 
