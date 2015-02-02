@@ -97,22 +97,22 @@ define(["inheritance", "common"], function(_inheritance, common) {
 			this.position = position;
 			this.velocity = Vector.polar(1, Math.random()*2*Math.PI);
 			this.radius = typeof size !== 'undefined' ? size : (Math.random() * 10 + 10);
+			this.prevRadius = -1;
+			this.theta = Math.random() * 2 * Math.PI;
         },
 
         update : function(time) {
 			
-			this.acceleration = new Vector(this.position);
-			this.acceleration.setToDifference(this.position, this.position);
-			
-			this.velocity.addMultiple(this.acceleration, time.elapsed);
-			this.position.addMultiple(this.velocity, time.elapsed);
-			
+			this.prevRadius = this.radius;
+			this.theta += time.elapsed;
+			this.radius += Math.sin(this.theta);
+			this.radius = Math.max(0.1,this.radius);
         },
 
 		draw : function(g) {
 			// color will be filled outside of class
 			g.noStroke();
-			g.ellipse(this.position.x, this.position.y, this.radius, this.radius);
+			g.ellipse(this.position.x, this.position.y, this.prevRadius, this.radius);
 		},
 		
 		shrinkSize : function(size) {

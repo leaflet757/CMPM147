@@ -174,33 +174,53 @@ define(["common", "./grids/grid", "./particles/particle"], function(common, Grid
 	// Cellular Automata
 	var CustomAutomata = Grid.extend({
 		cellSize : 20,
+		
 
 		// Create a starting value for the x y cell
 		// This could be an integer, floating point value, or an object
 		createStartValueFor : function(x, y) {
-			return Math.random();
+			var hue = Math.abs(utilities.noise(y * 0.2,x * 0.5, app.time.total)) % 1;
+			var sat = Math.max(Math.abs(utilities.noise(hue), app.time.total), 0.7);
+			var bri = Math.max(Math.abs(utilities.noise(sat), app.time.total), 0.6);
+			//return Math.abs(utilities.noise(x,y)) % 1;
+			return {h :hue, s : sat, b : bri};
 		},
 
 		// Compute the next value for this cell.
 		// You will probably want to look at the previous values of surrounding cells
 		computeNextValue : function(x, y) {
 			// TODO replace this with code that creates a Conways Game of Life simulation
-
+			
+			// do something else if the things are in the center
+			//console.log(this.columns, this.rows);
+			
 			// Blurring
 			// Get the last value, and the last values of any neighbors
 			var v = this.getLastValue(x, y);
 			var v0 = this.getLastValue(x + 1, y);
-			var v1 = this.getLastValue(x - 1, y);
-			var v2 = this.getLastValue(x, y - 1);
-			var v3 = this.getLastValue(x, y + 1);
+			//var v1 = this.getLastValue(x - 1, y);
+			//var v2 = this.getLastValue(x, y - 1);
+			var v1 = this.getLastValue(x, y + 1);
+			
+			//var neighbors = [this.getLastValue(x + 1, y), this.getLastValue(x - 1, y), this.getLastValue(x, y - 1), this.getLastValue(x, y + 1), this.getLastValue(x + 1, y + 1), this.getLastValue(x - 1, y - 1), this.getLastValue(x - 1, y + 1), this.getLastValue(x + 1, y - 1)];
 
-			return utilities.lerp((v0 + v1 + v2 + v3) / 4, v, .5);
+			var hue = utilities.lerp(v0.h,v1.h, 0.5);
+			var sat = utilities.lerp(v0.s,v1.s, 0.5);
+			var bri = utilities.lerp(v0.b,v1.b, 0.5);
+			
+			//var hue = utilities.lerp((v0.h+v1.h)/2, v.h, 0.5);
+			//var sat = utilities.lerp((v0.s,v1.s)/2, v.b, 0.5);
+			//var bri = utilities.lerp((v0.b,v1.b)/2, v.s, 0.5);
+
+			//return utilities.lerp((v0 + v1 + v2 + v3) / 4, v, .5);
+			//return this.getLastValue(x,y);
+			return {h:hue, s:sat, b:bri};
 		},
 
 		// Custom drawing
 		drawCell : function(g, value, x, y, width, height) {
-			g.fill(.9, 1, value);
-			g.rect(x, y, width, height);
+			g.fill(value.h, value.s, value.b);
+			g.ellipse(x, y, width, height);
 		},
 	});
 
@@ -216,7 +236,7 @@ define(["common", "./grids/grid", "./particles/particle"], function(common, Grid
 
 			for (var i = 0; i < 1000; i++) {
 
-				var color = new common.KColor((i * .023) % 1, .5 + .5 * utilities.noise(i * .02 + 5), 1);
+				var color = new common.KColor((i * .023) % 1, .5 + .5 * utilities.noise(i * .04 + 5), 1);
 				// var center = new Vector(utilities.noise(i * .06) * 400 + 400, 300 * utilities.noise(.06 * i + 30) + 300);
 				var center = new Vector(utilities.noise(i * .06) * 400 + 400, 300 * utilities.noise(.06 * i + 30) + 300);
 
@@ -290,12 +310,8 @@ define(["common", "./grids/grid", "./particles/particle"], function(common, Grid
 				}
 
 				for (var i = 0; i < this.particles.length; i++) {
-					//this.particles[i].shrinkSize(largestSize);
-				}
-
-				for (var i = 0; i < this.particles.length; i++) {
-					//this.particles[i].update(app.time);
-					region.idColor.fill(g, .3 * Math.sin(i));
+					this.particles[i].update(app.time);
+					region.idColor.fill(g, 0.3*Math.sin(i));
 					this.particles[i].draw(g);
 				}
 
