@@ -1,7 +1,7 @@
 var app = {};
 
 // A holder for lots of app-related functionality
-define(["processing", "./drawing", "./threeUtils/threeScene", "common", "./particles/particle"], function(_processing, drawing, ThreeScene, common, Particle) {'use strict';
+define(["processing", "./threeUtils/threeScene", "common", "./particles/particle", "./customGrids"], function(_processing, ThreeScene, common, Particle, customGrids) {'use strict';
 
     // A little time object to keep track of the current time,
     //   how long its been since the last frame we drew,
@@ -24,36 +24,45 @@ define(["processing", "./drawing", "./threeUtils/threeScene", "common", "./parti
 
     // Lets add some functions to the app object!
     $.extend(app, {
-
+        updateRate : .9,
         mouse : new Vector(),
         dimensions : new Vector(),
 
+        startMode : function(mode) {
+            this.mode = mode;
+            switch(mode) {
+                case 0:
+                    app.grid = new customGrids.ExampleAutomata();
+                    break;
+                case 1:
+                    app.grid = new customGrids.GameOfLife();
+                    break;
+                case 2:
+                    app.grid = new customGrids.CustomAutomata();
+                    break;
+                case 3:
+                    app.grid = new customGrids.CustomVoronoi();
+                    break;
+
+            }
+        },
         init : function() {
-            app.is3D = true;
-            console.log("Hello, World.");
-            app.toggle3D();
-            app.threeScene = new ThreeScene($("#threeview"));
-         
+            //  app.threeScene = new ThreeScene($("#threeview"));
+
             // Get the canvas element
             // Note that this is the jquery selector, and not the DOM element (which we need)
             // myJQuerySelector.get(0) will return the canvas element to pass to processing
             var canvas = $("#processingCanvas");
-
+            app.updateTimer = 0;
             // Create the canvas
 
             var processingInstance = new Processing(canvas.get(0), function(g) {
-                app.particles = [];
-                // Create particles
-                for (var i = 0; i < 0; i++) {
-                    var p = new Particle();
-                    app.particles.push(p);
-                }
-                // This function is called once processing is initialized.
 
                 // Set the size of processing so that it matches that size of the canvas element
                 var w = canvas.width();
                 var h = canvas.height();
                 app.dimensions.setTo(w, h);
+                app.startMode(3);
 
                 g.size(w, h);
 
@@ -67,33 +76,33 @@ define(["processing", "./drawing", "./threeUtils/threeScene", "common", "./parti
                 g.ellipseMode(g.CENTER_RADIUS);
 
                 // Draw ONE-TIME things
-               drawing.drawGrid(g);
-              
-               drawing.setTerrainToHeight();
- 
+
                 g.draw = function() {
+                    g.background(.65, .3, .8);
 
                     // Update time
                     app.time.updateTime();
-                   // drawing.drawGrid(g);
-                    for (var i = 0; i < app.particles.length; i++) {
-                        app.particles[i].update(app.time);
+
+                    app.updateTimer += app.time.elapsed;
+                    if (app.updateTimer > app.updateRate) {
+                        console.log("update " + app.time.frames);
+                        app.updateTimer = 0;
+                        app.grid.update();
+
                     }
+
+                    app.grid.draw(g);
 
                     // Move to the center of the canvas
                     g.pushMatrix();
                     g.translate(w / 2, h / 2);
 
-                    for (var i = 0; i < app.particles.length; i++) {
-                      app.particles[i].draw(g);
-                    }
                     g.popMatrix();
 
                 };
             });
             this.initUI();
         },
-
         toggle3D : function() {
             if (!app.is3D) {
                 app.is3D = true;
@@ -107,7 +116,6 @@ define(["processing", "./drawing", "./threeUtils/threeScene", "common", "./parti
             console.log("Threeview: " + app.is3D);
 
         },
-
         initUI : function() {
 
             $("#view").mousemove(function(ev) {
@@ -137,25 +145,32 @@ define(["processing", "./drawing", "./threeUtils/threeScene", "common", "./parti
             $(document).keydown(function(e) {
 
                 var key = String.fromCharCode(e.keyCode);
+                console.log(e.keyCode);
 
                 switch(key) {
                     case ' ':
                         app.paused = !app.paused;
                         break;
                     case '1':
-                        // Do something when the user
-
-                        app.key = 1;
+                        app.startMode(1);
                         break;
-
-                    case 'T':
-                        // Do something
-                        drawing.setTerrainTextureToCanvas();
+                    case '2':
+                        app.startMode(2);
                         break;
                     case '3':
-                        console.log("Toggle 3D");
-                        app.toggle3D();
-                        // Do something
+                        app.startMode(3);
+                        break;
+                };
+
+                switch(e.keyCode) {
+
+                    case 189:
+                        app.updateRate *= .8;
+                        console.log(app.updateRate);
+                        break;
+                    case 187:
+                        app.updateRate /= .8;
+                        console.log(app.updateRate);
                         break;
                 }
 
