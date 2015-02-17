@@ -32,7 +32,7 @@ define(["processing", "common", "./ltree/ltree"], function(_processing, common, 
         init : function() {
 
             app.graphs = [];
-            var count = 15;
+            var count = 15 * Math.random();
             for (var i = 0; i < count; i++) {
                 var x = 600 * ((i + .5) / count - .5);
                 app.graphs.push(ltree.createLTree(new Vector(x, 200)));
@@ -63,7 +63,7 @@ define(["processing", "common", "./ltree/ltree"], function(_processing, common, 
                 // Move to the center of the canvas
 
                 g.draw = function() {
-                    g.fill(.55, .1, 1, 1);
+                    g.fill(.88, .1, 1, 1);
                     g.rect(0, 0, w, h);
 
                     // Update time
@@ -94,7 +94,7 @@ define(["processing", "common", "./ltree/ltree"], function(_processing, common, 
                 case ' ':
                     app.paused = !app.paused;
                     break;
-
+					
                 }
 
             });

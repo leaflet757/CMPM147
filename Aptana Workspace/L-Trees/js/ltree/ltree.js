@@ -3,16 +3,21 @@
  */
 
 define(["common", "graph/graph"], function(common, Graph) {
-    var SPREAD = 0;
+    var SPREAD = 9;
     var ID_ANGLE = 1;
-    var ANGLE_SKEW = 2;
-    var ANIM_ANGLE = 3;
+    var ANGLE_SKEW = 3;
+    var ANIM_ANGLE = 2;
     var SHRINKAGE = 4;
     var BUSHINESS = 5;
-    var HUE_START = 6;
-    var HUE_DIFF = 7;
+    var HUE_START = 7;
+    var HUE_DIFF = 6;
     var FLOWER_HUE = 8;
-    var FLOWER_COUNT = 9;
+    var FLOWER_COUNT = 0;
+    var GROW_FACTOR = 10;
+    var BRANCH_FACTOR = 11;
+    var SHAPE_SIZE = 12;
+    var SHAPE_COLOR = 13;
+    var SHAPE_POINTS = 14;
 
     var LENGTH_VARIATION = 6;
 
@@ -24,6 +29,7 @@ define(["common", "graph/graph"], function(common, Graph) {
             this._super();
             this.parent = parent;
             this.depth = 0;
+            this.timer = 0;
 
             // No children yet
             this.children = [];
@@ -38,7 +44,12 @@ define(["common", "graph/graph"], function(common, Graph) {
 
             // Make a color for this node
             this.idColor = new common.KColor((3 + this.dna[HUE_START] + this.dna[HUE_DIFF] * this.depth) % 1, 1, .1 + .1 * this.depth);
-
+            // set the time each should grow
+            this.dna[GROW_FACTOR] = 500;
+            this.dna[BRANCH_FACTOR] = Math.round(Math.abs(this.dna[BRANCH_FACTOR]) * 10);
+			this.dna[SHAPE_SIZE] = Math.abs(this.dna[SHAPE_SIZE] * 10000);
+			//this.dna[SHAPE_COLOR] = Math.abs(this.dna[SHAPE_COLOR]);
+			this.dna[SHAPE_POINTS] = Math.round(Math.abs(this.dna[SHAPE_POINTS]));
         },
 
         setParent : function() {
@@ -92,6 +103,15 @@ define(["common", "graph/graph"], function(common, Graph) {
             for (var i = 0; i < this.children.length; i++) {
                 this.children[i].update();
             }
+
+
+
+            this.timer++;
+            // spawn more children if its time
+            if (this.dna[GROW_FACTOR] < this.timer) {
+
+            	this.timer = 0;
+            }
         },
 
         draw : function(g) {
@@ -114,6 +134,12 @@ define(["common", "graph/graph"], function(common, Graph) {
                     var petalSize = 3 * this.radius;
                     g.ellipse(petalSize * 1.2, 0, petalSize, petalSize * .5);
                 }
+                
+                
+                	 g.fill(this.dna[SHAPE_COLOR], 1, 1, .7);
+                	g.ellipse(0,0,this.dna[SHAPE_SIZE] * 100,this.dna[SHAPE_SIZE] * 100)
+                	//console.log(this.dna[SHAPE_SIZE])
+                
 
                 g.popMatrix();
 
