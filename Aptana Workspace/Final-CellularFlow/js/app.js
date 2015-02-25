@@ -1,7 +1,7 @@
 var app = {};
 
 // A holder for lots of app-related functionality
-define(["processing", "./threeUtils/threeScene", "common", "./particles/particle", "./customGrids"], function(_processing, ThreeScene, common, Particle, customGrids) {
+define(["processing", "./threeUtils/threeScene", "common", "./particles/particle", "./customGrids", "./cellularGrid/cellGrid"], function(_processing, ThreeScene, common, Particle, customGrids, cellGrid) {
 	'use strict';
 
 	// A little time object to keep track of the current time,
@@ -30,7 +30,6 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 		dimensions : new Vector(),
 
 		// Final project data members
-		// TODO: grid : new customGrids.GameOfLife(),
 		clearBackground : false,
 		useFade : false,
 
@@ -51,6 +50,9 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				var h = canvas.height();
 				app.dimensions.setTo(w, h);
 				g.size(w, h);
+				
+				// creating the grid
+				app.grid = new cellGrid();
 
 				// Tell processing that we'll be defining colors with
 				//  the HSB color mode, with values [0, 1]
