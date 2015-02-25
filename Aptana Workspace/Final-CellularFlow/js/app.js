@@ -30,6 +30,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 		dimensions : new Vector(),
 
 		// Final project data members
+		// TODO: grid : new customGrids.GameOfLife(),
 		clearBackground : false,
 		useFade : false,
 
@@ -67,11 +68,11 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				var padding = app.dimensions.x / count1;
 				for (var i = 0; i < count1; i++) {
 					for (var p = 0; p < count2; p++) {
-						//if (i < count1 - 1 && i != 0 && p != 0) {
+						if (i < count1 - 1 && i != 0 && p != 0) {
 							// TODO: spawn cell under this condition
 							g.fill(0, 1, 1);
 							g.ellipse(i * padding, p * padding, 3, 3);
-						//}
+						}
 					}
 				}
 
@@ -98,8 +99,10 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 					if (app.updateTimer > app.updateRate) {
 						//console.log("update " + app.time.frames);
 						app.updateTimer = 0;
-
+						//app.grid.update(app.time);
 					}
+					// draw the cells
+					//app.grid.draw(g);
 
 				};
 			});

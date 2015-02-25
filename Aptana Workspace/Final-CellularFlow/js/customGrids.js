@@ -327,11 +327,34 @@ define(["common", "./grids/grid", "./particles/particle"], function(common, Grid
 			 */
 		},
 	});
+	
+	// DotGRID
+	var CellGrid = Grid.extend({
+		cellSize : 30,
+
+		// Create a starting value for the x y cell
+		// This could be an integer, floating point value, or an object
+		createStartValueFor : function(x, y) {
+			return Math.random();
+		},
+
+		computeNextValue : function(x, y) {
+			
+			return 1;
+		},
+
+		// Custom drawing
+		drawCell : function(g, value, x, y, width, height) {
+			g.fill(.2, 1, value);
+			g.rect(x, y, width, height);
+		},
+	});
 
 	return {
 		ExampleAutomata : ExampleAutomata,
 		CustomAutomata : CustomAutomata,
 		GameOfLife : GameOfLife,
+		CellGrid : CellGrid,
 		CustomVoronoi : CustomVoronoi,
 	};
 });
