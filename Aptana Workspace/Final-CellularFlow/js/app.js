@@ -125,19 +125,19 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 		},
 		initUI : function() {
 
-			$("#view").mousemove(function(ev) {
-				var x = ev.offsetX - app.dimensions.x / 2;
-				var y = ev.offsetY - app.dimensions.y / 2;
-				console.log(x + " " + y);
+			$("#app").mousemove(function(ev) {
+				var x = ev.offsetX;
+				var y = ev.offsetY;
+				//console.log(x + " " + y);
 				app.mouse.setTo(x, y);
 			});
 
 			// using the event helper
-			$('#view').mousewheel(function(event) {
+			$('#app').mousewheel(function(event) {
 
 			});
 
-			$("#view").draggable({
+			$("#app").draggable({
 				helper : function() {
 					return $("<div id='dragPos'></div>");
 				},
@@ -145,6 +145,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				drag : function(event, ui) {
 					var x = $('#dragPos').offset().left;
 					var y = $('#dragPos').offset().top;
+					console.log(x,y);
 				}
 			});
 
