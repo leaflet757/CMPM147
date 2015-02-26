@@ -27,6 +27,8 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 	$.extend(app, {
 		updateRate : .9,
 		mouse : new Vector(),
+		prevMouse : new Vector(),
+		mouseIsDown : false,
 		dimensions : new Vector(),
 
 		// Final project data members
@@ -50,9 +52,6 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				var h = canvas.height();
 				app.dimensions.setTo(w, h);
 				g.size(w, h);
-				
-				// creating the grid
-				app.grid = new cellGrid();
 
 				// Tell processing that we'll be defining colors with
 				//  the HSB color mode, with values [0, 1]
@@ -64,19 +63,9 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				// Draw ONE-TIME things
 				g.background(0, 0, 0);
 
-				// TODO: create cells
-				var count1 = app.dimensions.x / 30 - 1;
-				var count2 = app.dimensions.y / 30 - 1;
-				var padding = app.dimensions.x / count1;
-				for (var i = 0; i < count1; i++) {
-					for (var p = 0; p < count2; p++) {
-						if (i < count1 - 1 && i != 0 && p != 0) {
-							// TODO: spawn cell under this condition
-							g.fill(0, 1, 1);
-							g.ellipse(i * padding, p * padding, 3, 3);
-						}
-					}
-				}
+				// creating the grid
+				app.grid = new cellGrid();
+				console.log(app.grid);
 
 				g.draw = function() {
 					// Update time
@@ -93,8 +82,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 						g.fill(0, 0, 0, 0.03);
 						g.rect(0, 0, w, h);
 					}
-					
-					
+		
 
 					// Fixed update intervals
 					app.updateTimer += app.time.elapsed;
@@ -104,7 +92,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 						//app.grid.update(app.time);
 					}
 					// draw the cells
-					//app.grid.draw(g);
+					app.grid.draw(g);
 
 				};
 			});
@@ -136,6 +124,16 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 			$('#app').mousewheel(function(event) {
 
 			});
+			
+			$('#app').mousedown(function(event) {
+				app.mouseIsDown = true;
+				app.prevMouse.setTo(app.mouse.x, app.mouse.y);
+				app.grid.selectCell(app.prevMouse, app.dimensions);
+			});
+			
+			$('#app').mouseup(function(event) {
+				app.mouseIsDown = false;
+			});
 
 			$("#app").draggable({
 				helper : function() {
@@ -145,6 +143,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				drag : function(event, ui) {
 					var x = $('#dragPos').offset().left;
 					var y = $('#dragPos').offset().top;
+					app.grid.expandCell(x, y);
 					console.log(x,y);
 				}
 			});

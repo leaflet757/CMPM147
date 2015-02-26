@@ -1,111 +1,126 @@
 /**
  * @author Leif Myer
  */
-define(["inheritance", "common"], function(_inheritance, common) {'use strict';
-    var CellGrid = Class.extend({
-	
+define(["inheritance", "common", "./cell"], function(_inheritance, common, cell) {
+	'use strict';
+	var CellGrid = Class.extend({
+
 		// Member Variables
 		cellSize : 30,
-		
-        init : function() {
-            this.columns = Math.round(app.dimensions.x / this.cellSize);
-            this.rows = Math.round(app.dimensions.y / this.cellSize);
-            console.log("Create grid cell size " + this.cellSize + ", " + this.columns + " x " + this.rows);
+		selected : null,
 
-            this.values = [];
-            this.lastValues = [];
+		init : function() {
+			this.columns = Math.round(app.dimensions.x / this.cellSize);
+			this.rows = Math.round(app.dimensions.y / this.cellSize);
+			console.log("Create grid cell size " + this.cellSize + ", " + this.columns + " x " + this.rows);
 
-            for (var i = 0; i < this.columns; i++) {
-                this.values[i] = [];
-                this.lastValues[i] = [];
-                for (var j = 0; j < this.rows; j++) {
+			this.values = [];
+			this.lastValues = [];
 
-                    this.values[i][j] = this.createStartValueFor(i, j);
-                    this.lastValues[i][j] = this.createStartValueFor(i, j);
-                }
-            }
+			for (var i = 0; i < this.columns; i++) {
+				this.values[i] = [];
+				this.lastValues[i] = [];
+				for (var j = 0; j < this.rows; j++) {
 
-        },
+					this.values[i][j] = this.createStartValueFor(i, j);
+					this.lastValues[i][j] = this.createStartValueFor(i, j);
+				}
+			}
 
-        createStartValueFor : function(i, j) {
-			// TODO return cell obj
-            return {};
-        },
+		},
 
-        getLastValue : function(i, j) {
-            var rows = this.rows;
-            var cols = this.columns;
-            var iWrap = ((i % cols) + cols) % cols;
-            var jWrap = ((j % rows) + rows) % rows;
-            return this.lastValues[iWrap][jWrap];
-        },
+		createStartValueFor : function(i, j) {
+			return new cell();
+		},
 
-        getValue : function(i, j) {
-            var rows = this.rows;
-            var cols = this.columns;
-            var iWrap = ((i % cols) + cols) % cols;
-            var jWrap = ((j % rows) + rows) % rows;
-            return this.values[iWrap][jWrap];
-        },
+		getLastValue : function(i, j) {
+			var rows = this.rows;
+			var cols = this.columns;
+			var iWrap = ((i % cols) + cols) % cols;
+			var jWrap = ((j % rows) + rows) % rows;
+			return this.lastValues[iWrap][jWrap];
+		},
 
-        computeNextValue : function(i, j) {
+		getValue : function(i, j) {
+			var rows = this.rows;
+			var cols = this.columns;
+			var iWrap = ((i % cols) + cols) % cols;
+			var jWrap = ((j % rows) + rows) % rows;
+			return this.values[iWrap][jWrap];
+		},
+
+		computeNextValue : function(i, j) {
 			// TODO: leave unimplemented for now
-            
-        },
 
-        applyToGrid : function(fxn) {
-            for (var i = 0; i < this.columns; i++) {
-                for (var j = 0; j < this.rows; j++) {
+		},
 
-                    fxn(i, j, this.values[i][j]);
-                }
-            }
-        },
+		// applies a transform to the grid
+		applyToGrid : function(fxn) {
+			for (var i = 0; i < this.columns; i++) {
+				for (var j = 0; j < this.rows; j++) {
+					fxn(i, j, this.values[i][j]);
+				}
+			}
+		},
 
-        update : function() {
-            // Save the last values
-            for (var i = 0; i < this.columns; i++) {
-                for (var j = 0; j < this.rows; j++) {
-                    this.lastValues[i][j] = this.values[i][j];
-                }
-            }
-            // compute the next values
-            for (var i = 0; i < this.columns; i++) {
-                for (var j = 0; j < this.rows; j++) {
-                    this.computeNextValue(i, j);
-                }
-            }
+		selectCell : function(mousePos, dimensions) {
+			var xSpacing = dimensions.x / this.columns;
+			var ySpacing = dimensions.y / this.rows;
 
-            // Do after-calculation stuff
-            if (this.postUpdate) {
-                for (var i = 0; i < this.columns; i++) {
-                    for (var j = 0; j < this.rows; j++) {
-                        this.postUpdate(i, j);
-                    }
-                }
-            }
+			for (var i = 1; i < this.columns; i++) {
+				for (var j = 1; j < this.rows; j++) {
+					if (mousePos.x > i * xSpacing - xSpacing/2 && mousePos.x < i * xSpacing + xSpacing/2 && mousePos.y > j * ySpacing - ySpacing/2 && mousePos.y < j * ySpacing + ySpacing/2) {
+						this.selected = this.values[i-1][j - 1];
+					}
+				}
+			}
+		},
 
-        },
-        draw : function(g) {
-            var xSpacing = g.width / this.columns;
-            var ySpacing = g.height / this.rows;
+		expandCell : function(dragx, dragy) {
+			if (this.selected != null) {
+				this.selected.expand(dragx);
+			}
+		},
 
-            g.noStroke();
-            for (var i = 0; i < this.columns; i++) {
-                for (var j = 0; j < this.rows; j++) {
+		update : function(time) {
+			// compute the next values
+			for (var i = 0; i < this.columns; i++) {
+				for (var j = 0; j < this.rows; j++) {
+					// save the last values
+					this.lastValues[i][j] = this.values[i][j];
+					// compute the next values
+					this.computeNextValue(i, j);
+				}
+			}
 
-                    this.drawCell(g, this.values[i][j], i * xSpacing, j * ySpacing, xSpacing, ySpacing);
+			// Do after-calculation stuff
+			if (this.postUpdate) {
+				for (var i = 0; i < this.columns; i++) {
+					for (var j = 0; j < this.rows; j++) {
+						this.postUpdate(i, j);
+					}
+				}
+			}
 
-                }
-            }
-        },
+		},
 
-        drawCell : function(g, value, x, y, xSpacing, ySpacing) {
-			// TODO: change to custom drawing
-            g.fill(.5, .5, value);
-            g.rect(x, y, xSpacing, ySpacing);
-        }
-    });
-    
-    return CellGrid;
+		draw : function(g) {
+			var xSpacing = g.width / this.columns;
+			var ySpacing = g.height / this.rows;
+
+			for (var i = 1; i < this.columns; i++) {
+				for (var j = 1; j < this.rows; j++) {
+					this.drawCell(g, this.values[i-1][j - 1], i * xSpacing, j * ySpacing, xSpacing, ySpacing);
+				}
+			}
+		},
+
+		drawCell : function(g, value, x, y, xSpacing, ySpacing) {
+			g.fill(.5, .5, 1);
+			//g.rect(x - xSpacing / 2, y - ySpacing / 2, xSpacing, ySpacing);
+			value.draw(g, x, y);
+		}
+	});
+
+	return CellGrid;
 });
