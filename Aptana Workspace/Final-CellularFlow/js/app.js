@@ -1,3 +1,7 @@
+// TODO LIST:
+// implement better dragging
+// implement cell growing and shrinking via dragging.
+
 var app = {};
 
 // A holder for lots of app-related functionality
