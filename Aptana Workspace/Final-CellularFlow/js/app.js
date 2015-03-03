@@ -1,5 +1,5 @@
 // TODO LIST:
-// implement better dragging
+// 
 
 var app = {};
 
@@ -70,6 +70,8 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				// creating the grid
 				app.grid = new cellGrid();
 				console.log(app.grid);
+				
+				// create the boids
 
 				g.draw = function() {
 					// Update time
@@ -137,6 +139,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 
 			$('#app').mouseup(function(event) {
 				app.mouseIsDown = false;
+				app.grid.findInfluence();
 			});
 
 			$("#app").draggable({
@@ -147,9 +150,11 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				drag : function(event, ui) {
 					var x = $('#dragPos').offset().left;
 					var y = $('#dragPos').offset().top;
-					app.grid.expandCell(app.prevMouse, app.mouse);
-					console.log(app.prevMouse, app.mouse);
+					app.grid.expandCell(app.mouse);
 					console.log(x, y);
+					// TODO:
+					// test if you can find influence here without lagging
+					// app.grid.findInfluence();
 				}
 			});
 

@@ -1,19 +1,21 @@
 /**
  * @author Leif Myer
  */
+// NOTE: previous values are not all being updated
+
 define(["inheritance", "common", "./cell"], function(_inheritance, common, cell) {
 	'use strict';
 	var CellGrid = Class.extend({
 
-		// Member Variables
+		// Static Variables
 		cellSize : 30,
 		selected : null,
 
 		init : function() {
 			this.columns = Math.round(app.dimensions.x / this.cellSize);
 			this.rows = Math.round(app.dimensions.y / this.cellSize);
-			var xSpacing = app.dimensions.x / this.columns;
-			var ySpacing = app.dimensions.y / this.rows;
+			this.xSpacing = app.dimensions.x / this.columns;
+			this.ySpacing = app.dimensions.y / this.rows;
 			console.log("Create grid cell size " + this.cellSize + ", " + this.columns + " x " + this.rows);
 
 			this.values = [];
@@ -23,16 +25,15 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 				this.values[i] = [];
 				this.lastValues[i] = [];
 				for (var j = 0; j < this.rows; j++) {
-
-					this.values[i][j] = this.createStartValueFor((i + 1) * xSpacing, (j + 1) * ySpacing);
-					this.lastValues[i][j] = this.createStartValueFor((i + 1) * xSpacing, (j + 1) * ySpacing);
+					this.values[i][j] = this.createStartValueFor((i + 1) * this.xSpacing, (j + 1) * this.ySpacing, i, j);
+					this.lastValues[i][j] = this.createStartValueFor((i + 1) * this.xSpacing, (j + 1) * this.ySpacing, i, j);
 				}
 			}
 
 		},
 
-		createStartValueFor : function(i, j) {
-			return new cell(i, j);
+		createStartValueFor : function(x, y, r, c) {
+			return new cell(x, y, r, c);
 		},
 
 		getLastValue : function(i, j) {
@@ -66,17 +67,15 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 		},
 
 		selectCell : function(mousePos) {
-			var xSpacing = app.dimensions.x / this.columns;
-			var ySpacing = app.dimensions.y / this.rows;
 
-			this.selected = null;
+			//this.selected = null;
 			var aIndex = 0;
 			var ascended = [];
 
 			for (var i = 1; i < this.columns; i++) {
 				for (var j = 1; j < this.rows; j++) {
 					var val = this.values[i-1][j - 1];
-					if (mousePos.x > i * xSpacing - xSpacing / 2 && mousePos.x < i * xSpacing + xSpacing / 2 && mousePos.y > j * ySpacing - ySpacing / 2 && mousePos.y < j * ySpacing + ySpacing / 2) {
+					if (mousePos.x > i * this.xSpacing - this.xSpacing / 2 && mousePos.x < i * this.xSpacing + this.xSpacing / 2 && mousePos.y > j * this.ySpacing - this.ySpacing / 2 && mousePos.y < j * this.ySpacing + this.ySpacing / 2) {
 						this.selected = val;
 					}
 					if (val.size > val.STATIC_SIZE) {
@@ -94,9 +93,9 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 			}
 		},
 
-		expandCell : function(prevMouse, mousePos) {
+		expandCell : function(mousePos) {
 			if (this.selected != null) {
-				this.selected.expand(prevMouse, mousePos);
+				this.selected.expand(mousePos);
 			}
 		},
 
@@ -123,20 +122,12 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 		},
 
 		draw : function(g) {
-			var xSpacing = g.width / this.columns;
-			var ySpacing = g.height / this.rows;
 
 			for (var i = 1; i < this.columns; i++) {
 				for (var j = 1; j < this.rows; j++) {
-					this.drawCell(g, this.values[i-1][j - 1], i * xSpacing, j * ySpacing, xSpacing, ySpacing);
+					this.values[i-1][j - 1].draw(g);
 				}
 			}
-		},
-
-		drawCell : function(g, value, x, y, xSpacing, ySpacing) {
-			g.fill(.5, .5, 1);
-			//g.rect(x - xSpacing / 2, y - ySpacing / 2, xSpacing, ySpacing);
-			value.draw(g, x, y);
 		},
 
 		reset : function() {
@@ -144,6 +135,28 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 			for (var i = 0; i < this.columns; i++) {
 				for (var j = 0; j < this.rows; j++) {
 					this.values[i][j].reset();
+				}
+			}
+		},
+
+		findInfluence : function() {
+			// remove previous influences
+			this.selected.removeParents();
+			// find the cells that will be effected
+			var xInf = Math.round(this.selected.size / this.xSpacing);
+			var yInf = Math.round(this.selected.size / this.ySpacing);
+			//	will be Inf +- ROWCOL ID
+			//	for all cells c that are not the selected cell
+			//		c.addInf(selected)
+			for (var i = this.selected.ROW_ID - xInf; i <= this.selected.ROW_ID + xInf; i++) {
+				for (var j = this.selected.COL_ID - yInf; j <= this.selected.COL_ID + yInf; j++) {
+					var val = this.values[i][j];
+					if (val != this.selected) {
+						var distance = val.position.getDistanceToIgnoreZ(this.selected.position);
+						if (distance <= val.size + this.selected.size) {
+							this.values[i][j].addParent(this.selected);
+						}
+					}
 				}
 			}
 		}

@@ -6,29 +6,23 @@ define(["inheritance", "common"], function(_inheritance, common) {
 
 	var Cell = Class.extend({
 
-		// Member Variables
+		// Static Variables
 		STATIC_SIZE : 3,
-		EXPANSION_RATE : 2,
-		color : {},
-		position : {},
 
-		init : function(x, y) {
-			this.color = new common.KColor(0, 1, 1);
-			this.position = new Vector(x,y);
+		init : function(x, y, row, col) {
+			this.ROW_ID = row;
+			this.COL_ID = col;
+			this.parents = [];
+			this.color = new common.KColor(0, 0, 1, 0.1);
+			this.position = new Vector(x, y);
 			this.size = this.STATIC_SIZE;
 		},
 
-		expand : function(prevMouse, mousePos) {
-			var prevDist = prevMouse.getDistanceToIgnoreZ(this.position);
+		expand : function(mousePos) {
 			var newDist = mousePos.getDistanceToIgnoreZ(this.position);
-			if (newDist - prevDist > 0) {
-				this.size += this.EXPANSION_RATE;
-			}
-			else {
-				this.size -= this.EXPANSION_RATE;
-			}
+			this.size = newDist;
 		},
-		
+
 		reset : function() {
 			this.size = this.STATIC_SIZE;
 		},
@@ -37,11 +31,31 @@ define(["inheritance", "common"], function(_inheritance, common) {
 
 		},
 
-		draw : function(g, x, y) {
+		draw : function(g) {
 			g.noStroke();
-			this.color.fill(g);
-			g.ellipse(x, y, this.size, this.size);
-		}
+			// TODO: remove when correct
+			if (this.parents.length == 0) {
+				this.color.fill(g);
+			}
+			else {
+				g.fill(0, 1, 1, 0.1);
+			}
+			g.ellipse(this.position.x, this.position.y, this.size, this.size);
+		},
+		
+		addParent : function(cell) {
+			this.parents[this.parents.length] = cell;
+		},
+		
+		removeParents : function() {
+			this.parents = [];
+		},
+		
+		getParentInfluences : function() {
+			for(var i = 0; i < this.parents.length; i++) {
+				
+			}
+		},
 	});
 
 	return Cell;
