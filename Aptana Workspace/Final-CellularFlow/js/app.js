@@ -1,6 +1,5 @@
 // TODO LIST:
 // implement better dragging
-// implement cell growing and shrinking via dragging.
 
 var app = {};
 
@@ -122,6 +121,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				var x = ev.offsetX;
 				var y = ev.offsetY;
 				//console.log(x + " " + y);
+				app.prevMouse.setTo(app.mouse.x, app.mouse.y);
 				app.mouse.setTo(x, y);
 			});
 
@@ -132,7 +132,6 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 
 			$('#app').mousedown(function(event) {
 				app.mouseIsDown = true;
-				app.prevMouse.setTo(app.mouse.x, app.mouse.y);
 				app.grid.selectCell(app.prevMouse);
 			});
 
@@ -148,7 +147,8 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				drag : function(event, ui) {
 					var x = $('#dragPos').offset().left;
 					var y = $('#dragPos').offset().top;
-					app.grid.expandCell(x, y);
+					app.grid.expandCell(app.prevMouse, app.mouse);
+					console.log(app.prevMouse, app.mouse);
 					console.log(x, y);
 				}
 			});

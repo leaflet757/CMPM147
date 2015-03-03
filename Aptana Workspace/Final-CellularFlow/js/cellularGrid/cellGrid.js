@@ -94,9 +94,9 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 			}
 		},
 
-		expandCell : function(dragx, dragy) {
+		expandCell : function(prevMouse, mousePos) {
 			if (this.selected != null) {
-				this.selected.expand(dragx);
+				this.selected.expand(prevMouse, mousePos);
 			}
 		},
 

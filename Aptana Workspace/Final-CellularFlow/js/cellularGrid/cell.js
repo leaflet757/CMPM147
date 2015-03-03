@@ -8,20 +8,24 @@ define(["inheritance", "common"], function(_inheritance, common) {
 
 		// Member Variables
 		STATIC_SIZE : 3,
-		size : 3,
+		EXPANSION_RATE : 2,
 		color : {},
 		position : {},
 
 		init : function(x, y) {
 			this.color = new common.KColor(0, 1, 1);
 			this.position = new Vector(x,y);
+			this.size = this.STATIC_SIZE;
 		},
 
-		expand : function(factor) {
-			if (factor > 0) {
-				this.size += 2;
-			} else {
-				this.size -= 2;
+		expand : function(prevMouse, mousePos) {
+			var prevDist = prevMouse.getDistanceToIgnoreZ(this.position);
+			var newDist = mousePos.getDistanceToIgnoreZ(this.position);
+			if (newDist - prevDist > 0) {
+				this.size += this.EXPANSION_RATE;
+			}
+			else {
+				this.size -= this.EXPANSION_RATE;
 			}
 		},
 		
