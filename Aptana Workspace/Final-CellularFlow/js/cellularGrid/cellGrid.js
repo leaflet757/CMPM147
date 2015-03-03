@@ -145,16 +145,23 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 			// find the cells that will be effected
 			var xInf = Math.round(this.selected.size / this.xSpacing);
 			var yInf = Math.round(this.selected.size / this.ySpacing);
+			var xLowerBound = Math.max(0, this.selected.ROW_ID - xInf);
+			var xUpperBound = Math.max(this.selected.ROW_ID + xInf, this.selected.ROW_ID);
+			var yLowerBound = Math.max(0, this.selected.COL_ID - yInf);
+			var yUpperBound = Math.max(this.selected.COL_ID + yInf, this.selected.COL_ID);
+			console.log(xLowerBound, xUpperBound, yLowerBound, xUpperBound);
 			//	will be Inf +- ROWCOL ID
 			//	for all cells c that are not the selected cell
 			//		c.addInf(selected)
-			for (var i = this.selected.ROW_ID - xInf; i <= this.selected.ROW_ID + xInf; i++) {
-				for (var j = this.selected.COL_ID - yInf; j <= this.selected.COL_ID + yInf; j++) {
+			for (var i = xLowerBound; i <= xUpperBound; i++) {
+				for (var j = yLowerBound; j <= yUpperBound; j++) {
 					var val = this.values[i][j];
 					if (val != this.selected) {
 						var distance = val.position.getDistanceToIgnoreZ(this.selected.position);
-						if (distance <= val.size + this.selected.size) {
-							this.values[i][j].addParent(this.selected);
+						// only effect cells that are unchanged
+						// TODO: should parents effect larger cells?
+						if (distance <= val.size + this.selected.size && val.size == val.STATIC_SIZE) {
+							val.addParent(this.selected);
 						}
 					}
 				}
