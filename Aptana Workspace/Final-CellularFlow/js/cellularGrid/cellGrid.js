@@ -12,6 +12,8 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 		init : function() {
 			this.columns = Math.round(app.dimensions.x / this.cellSize);
 			this.rows = Math.round(app.dimensions.y / this.cellSize);
+			var xSpacing = app.dimensions.x / this.columns;
+			var ySpacing = app.dimensions.y / this.rows;
 			console.log("Create grid cell size " + this.cellSize + ", " + this.columns + " x " + this.rows);
 
 			this.values = [];
@@ -22,15 +24,15 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 				this.lastValues[i] = [];
 				for (var j = 0; j < this.rows; j++) {
 
-					this.values[i][j] = this.createStartValueFor(i, j);
-					this.lastValues[i][j] = this.createStartValueFor(i, j);
+					this.values[i][j] = this.createStartValueFor((i + 1) * xSpacing, (j + 1) * ySpacing);
+					this.lastValues[i][j] = this.createStartValueFor((i + 1) * xSpacing, (j + 1) * ySpacing);
 				}
 			}
 
 		},
 
 		createStartValueFor : function(i, j) {
-			return new cell();
+			return new cell(i, j);
 		},
 
 		getLastValue : function(i, j) {
@@ -63,15 +65,31 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 			}
 		},
 
-		selectCell : function(mousePos, dimensions) {
-			var xSpacing = dimensions.x / this.columns;
-			var ySpacing = dimensions.y / this.rows;
+		selectCell : function(mousePos) {
+			var xSpacing = app.dimensions.x / this.columns;
+			var ySpacing = app.dimensions.y / this.rows;
+
+			this.selected = null;
+			var aIndex = 0;
+			var ascended = [];
 
 			for (var i = 1; i < this.columns; i++) {
 				for (var j = 1; j < this.rows; j++) {
-					if (mousePos.x > i * xSpacing - xSpacing/2 && mousePos.x < i * xSpacing + xSpacing/2 && mousePos.y > j * ySpacing - ySpacing/2 && mousePos.y < j * ySpacing + ySpacing/2) {
-						this.selected = this.values[i-1][j - 1];
+					var val = this.values[i-1][j - 1];
+					if (mousePos.x > i * xSpacing - xSpacing / 2 && mousePos.x < i * xSpacing + xSpacing / 2 && mousePos.y > j * ySpacing - ySpacing / 2 && mousePos.y < j * ySpacing + ySpacing / 2) {
+						this.selected = val;
 					}
+					if (val.size > val.STATIC_SIZE) {
+						ascended[aIndex++] = val;
+					}
+				}
+			}
+
+			// chcek to see if mouse is in larger cirlces
+			for (var i = 0; i < aIndex; i++) {
+				var distance = mousePos.getDistanceToIgnoreZ(ascended[i].position);
+				if (distance < ascended[i].size) {
+					this.selected = ascended[i];
 				}
 			}
 		},
@@ -119,6 +137,15 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 			g.fill(.5, .5, 1);
 			//g.rect(x - xSpacing / 2, y - ySpacing / 2, xSpacing, ySpacing);
 			value.draw(g, x, y);
+		},
+
+		reset : function() {
+			console.log('reseting...');
+			for (var i = 0; i < this.columns; i++) {
+				for (var j = 0; j < this.rows; j++) {
+					this.values[i][j].reset();
+				}
+			}
 		}
 	});
 

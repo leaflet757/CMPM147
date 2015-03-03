@@ -37,7 +37,8 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 
 		// Final project data members
 		clearBackground : false,
-		useFade : false,
+		useFade : true,
+		drawCells : true,
 
 		init : function() {
 			//  app.threeScene = new ThreeScene($("#threeview"));
@@ -86,7 +87,6 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 						g.fill(0, 0, 0, 0.03);
 						g.rect(0, 0, w, h);
 					}
-		
 
 					// Fixed update intervals
 					app.updateTimer += app.time.elapsed;
@@ -96,8 +96,9 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 						//app.grid.update(app.time);
 					}
 					// draw the cells
-					app.grid.draw(g);
-
+					if (app.drawCells) {
+						app.grid.draw(g);
+					}
 				};
 			});
 			this.initUI();
@@ -128,13 +129,13 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 			$('#app').mousewheel(function(event) {
 
 			});
-			
+
 			$('#app').mousedown(function(event) {
 				app.mouseIsDown = true;
 				app.prevMouse.setTo(app.mouse.x, app.mouse.y);
-				app.grid.selectCell(app.prevMouse, app.dimensions);
+				app.grid.selectCell(app.prevMouse);
 			});
-			
+
 			$('#app').mouseup(function(event) {
 				app.mouseIsDown = false;
 			});
@@ -148,7 +149,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 					var x = $('#dragPos').offset().left;
 					var y = $('#dragPos').offset().top;
 					app.grid.expandCell(x, y);
-					console.log(x,y);
+					console.log(x, y);
 				}
 			});
 
@@ -175,6 +176,12 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				case 'N':
 					app.updateRate /= .8;
 					console.log(app.updateRate);
+					break;
+				case 'D':
+					app.drawCells = !app.drawCells;
+					break;
+				case 'R':
+					app.grid.reset();
 					break;
 				case '1':
 
