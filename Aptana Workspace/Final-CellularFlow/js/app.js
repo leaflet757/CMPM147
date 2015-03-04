@@ -1,5 +1,6 @@
 // TODO LIST:
-// 
+// Check vectors
+// start working on boids
 
 var app = {};
 
@@ -151,7 +152,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 					var x = $('#dragPos').offset().left;
 					var y = $('#dragPos').offset().top;
 					app.grid.expandCell(app.mouse);
-					console.log(x, y);
+					//console.log(x, y);
 					// TODO:
 					// test if you can find influence here without lagging
 					// app.grid.findInfluence();

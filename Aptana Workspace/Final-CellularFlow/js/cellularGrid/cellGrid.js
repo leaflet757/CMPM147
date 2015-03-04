@@ -149,7 +149,7 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 			var xUpperBound = Math.max(this.selected.ROW_ID + xInf, this.selected.ROW_ID);
 			var yLowerBound = Math.max(0, this.selected.COL_ID - yInf);
 			var yUpperBound = Math.max(this.selected.COL_ID + yInf, this.selected.COL_ID);
-			console.log(xLowerBound, xUpperBound, yLowerBound, xUpperBound);
+			// console.log(xLowerBound, xUpperBound, yLowerBound, xUpperBound);
 			//	will be Inf +- ROWCOL ID
 			//	for all cells c that are not the selected cell
 			//		c.addInf(selected)
