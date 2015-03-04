@@ -141,7 +141,7 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 
 		findInfluence : function() {
 			// remove previous influences
-			this.selected.removeParents();
+			this.selected.removeChildren();
 			// find the cells that will be effected
 			var xInf = Math.round(this.selected.size / this.xSpacing);
 			var yInf = Math.round(this.selected.size / this.ySpacing);
@@ -161,7 +161,7 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 						// only effect cells that are unchanged
 						// TODO: should parents effect larger cells?
 						if (distance <= val.size + this.selected.size && val.size == val.STATIC_SIZE) {
-							val.addParent(this.selected);
+							this.selected.addChild(val);
 						}
 					}
 				}

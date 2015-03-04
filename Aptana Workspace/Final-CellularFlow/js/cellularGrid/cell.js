@@ -12,14 +12,16 @@ define(["inheritance", "common"], function(_inheritance, common) {
 		init : function(x, y, row, col) {
 			this.ROW_ID = row;
 			this.COL_ID = col;
-			this.parents = [];
-			this.color = new common.KColor(0, 0, 1, 0.1);
+			this.children = [];
+			this.color = new common.KColor(Math.abs(utilities.noise(x,y)), 0, 0.5, 0.1);
+			//this.color = new common.KColor(Math.abs(utilities.noise(x,y)), 0.5, 1, 0.1);
 			this.position = new Vector(x, y);
 			this.size = this.STATIC_SIZE;
 		},
 
 		expand : function(mousePos) {
 			var newDist = mousePos.getDistanceToIgnoreZ(this.position);
+			this.color.s = newDist/(200-this.STATIC_SIZE);
 			this.size = newDist;
 		},
 
@@ -33,26 +35,20 @@ define(["inheritance", "common"], function(_inheritance, common) {
 
 		draw : function(g) {
 			g.noStroke();
-			// TODO: remove when correct
-			if (this.parents.length == 0) {
-				this.color.fill(g);
-			}
-			else {
-				g.fill(0, 1, 1, 0.1);
-			}
+			this.color.fill(g);
 			g.ellipse(this.position.x, this.position.y, this.size, this.size);
 		},
 		
-		addParent : function(cell) {
-			this.parents[this.parents.length] = cell;
+		addChild : function(cell) {
+			this.children[this.children.length] = cell;
 		},
 		
-		removeParents : function() {
-			this.parents = [];
+		removeChildren : function() {
+			this.children = [];
 		},
 		
-		getParentInfluences : function() {
-			for(var i = 0; i < this.parents.length; i++) {
+		influenceChildren : function() {
+			for(var i = 0; i < this.children.length; i++) {
 				
 			}
 		},
