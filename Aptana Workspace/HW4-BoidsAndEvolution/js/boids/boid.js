@@ -81,26 +81,31 @@ define(["common", "particles/particle"], function(common, Particle) {
 						count++;
 						var neighbor = this.neighbors[i];
 
-						// Modify the flock center and the flock target
-						// where is everyone, and what direction are they moving?
-						this.forces.separation.setTo(neighbor.x - this.x, neighbor.y - this.y);
-						this.forces.cohesion.add(neighbor);
-						this.forces.alignment.add(neighbor.velocity);
-
 						// Is anyone too close?
+						var factor = 1;
 						var d = neighbor.getDistanceTo(this);
 						var range = 20;
 						if (d < range) {
 							// TODO: Do something to push this boid away from its neighbor
 							// add ...something to this.forces.separation
+							factor = 10;
+							//console.log('too close');
 						}
+
+						// Modify the flock center and the flock target
+						// this.flockCenter.add(neighbor);
+						// where is everyone, and what direction are they moving?
+						this.forces.separation.setTo(this.forces.separation.x + factor * (neighbor.x - this.x), this.forces.separation.y + factor * (neighbor.y - this.y));
+						this.forces.cohesion.add(neighbor);
+						this.forces.alignment.add(neighbor.velocity);
 
 					}
 				}
 
-				// TODO: You will probably need to divide by the number of neighbors that you added up
+				// You will probably need to divide by the number of neighbors that you added up
 				//  then use flockCenter and flockTarget to do something to the cohesion and alignment forces
 				if (count > 0) {
+					// this.flockCenter.div(count);
 					this.forces.cohesion.div(count);
 					this.forces.alignment.div(count);
 					this.forces.separation.div(count);
@@ -110,9 +115,9 @@ define(["common", "particles/particle"], function(common, Particle) {
 				this.forces.alignment.normalize();
 				this.forces.separation.mult(-1);
 				this.forces.separation.normalize();
-				// forces for testing 
-				//this.forces.alignment.mult(10); 
-				//this.forces.cohesion.mult(10);
+				// forces for testing
+				//this.forces.alignment.mult(2);
+				//this.forces.cohesion.mult(3);
 				//this.forces.separation.mult(10);
 
 				// USE MULTIPLIERS TO MAKE EACH FLOCK A BIT DIFFERENT
@@ -157,7 +162,8 @@ define(["common", "particles/particle"], function(common, Particle) {
 			g.noStroke();
 			this.idColor.fill(g);
 
-			//  this.flockTarget.drawCircle(g, 6);
+			//this.flockTarget.drawCircle(g, 6);
+			//this.flockCenter.drawCircle(g, 6);
 
 			g.pushMatrix();
 			this.translateTo(g);

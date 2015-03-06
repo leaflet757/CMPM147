@@ -50,9 +50,9 @@ define(["processing", "common", "./trees/treeEvo", "./boids/boidEvo", "./customE
                 app.dimensions.setTo(w, h);
 
                 // TODO switch between BoidEvo and CustomEvo here
-                app.evolution = new BoidEvo();
-                //    app.evolution = new TreeEvo();
-                //    app.evolution = new CustomEvo();
+                //	  app.evolution = new BoidEvo();
+                //	  app.evolution = new TreeEvo();
+                app.evolution = new CustomEvo();
 
                 g.size(w, h);
 
