@@ -330,7 +330,7 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 				// g.background(.5);
 
 				// You can specify backgrounds with one value, for greyscale,
-				//  g.background(.65);
+				g.background(.65);
 
 				// or with 3 for HSB (or whatever color mode you are using)
 
@@ -339,7 +339,7 @@ define(["processing", "./particles/particle", "interaction/audio", "interaction/
 
 				// Set processing's draw function
 
-				g.background(.84, .4, 0.8);
+				//g.background(.84, .4, 0.8);
 
 				g.draw = function() {
 
