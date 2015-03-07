@@ -4,64 +4,93 @@
 
 define(["common"], function(common) {
 
-    var Individual = Class.extend({
-        init : function(dna, index) {
-            this.dna = dna;
-            this.index = index;
+	var Individual = Class.extend({
+		init : function(dna, index) {
+			this.dna = dna;
+			this.index = index;
+			this.boxSize = 140;
 
-            // line them up in rows
+			// line them up in rows
 
-            this.center = new Vector((index % 5) * 150 - 300, Math.floor(index / 5) * 150 - 200);
-            console.log(index + ": " + this.center);
-            // TODO MAybe use this dna to make something
+			this.center = new Vector((index % 5) * 150 - 300, Math.floor(index / 5) * 150 - 200);
+			console.log(index + ": " + this.center);
 
-        },
+			// MAybe use this dna to make something
+			this.segmentShape = {
+				square : 0,
+				circle : 1,
+				trapezoid : 2,
+				oval : 3,
+				rectangle : 4,
+				triangle : 5,
+			};
 
-        update : function(time) {
-            // TODO Update the thing based on dna? on time?
+		},
 
-        },
+		update : function(time) {
+			// TODO Update the thing based on dna? on time?
 
-        draw : function(g) {
-            // TODO Use this dna to draw something
+		},
 
-            // Move to the right square
-            g.pushMatrix();
+		draw : function(g) {
+			// Move to the right square
+			g.pushMatrix();
 
-            this.center.translateTo(g);
+			this.center.translateTo(g);
 
-            g.fill(0, 0, 0, .4);
-            var boxSize = 140;
-            g.rect(-boxSize / 2, -boxSize / 2, boxSize, boxSize);
-            for (var i = 0; i < this.dna.length / 5; i++) {
-                var r = 10 + 30 * this.dna[i * 5];
-                var theta = Math.PI * 2 * this.dna[i * 5 + 1];
-                var hue = this.dna[i * 5 + 2];
-                var pastel = this.dna[i * 5 + 3];
-                var size = 30 * this.dna[i * 5 + 4];
+			g.fill(0, 0, 0, .4);
+			g.rect(-this.boxSize / 2, -this.boxSize / 2, this.boxSize, this.boxSize);
+			// Use this dna to draw something
+			g.noStroke();
+			// MORE HARD CODING POWER!!!!
+			// Leg Color
+			var legHue = this.dna[2];
+			// Legs
+			var legCount = this.dna[0];
+			// Leg Segments
+			var legSeg = this.dna[1];
+			//console.log(legSeg);
+			var center = new Vector(0, 0);
+			for (var i = 0; i < legSeg; i++) {
+				g.fill(legHue, 1, i / (legSeg - 1));
+				//g.rotate(segPosForAngle.getAngleTo(this.center));
+				//g.ellipse(segPos.x, segPos.y, segLength, 2);
+				// other side
+			}
+			// Body Color
 
-                var p = Vector.polar(r, theta);
-                var color = new common.KColor(hue, 1.2 - pastel, 1.2 * pastel);
-                color.fill(g);
-                g.noStroke();
-                p.drawCircle(g, size, size);
-            }
-            g.popMatrix();
-        },
+			// Body Shape
 
-        // Is this being clicked on?
-        getDistanceTo : function(target) {
-            return this.center.getDistanceTo(target);
-        },
+			// Body Segments
 
-        select : function() {
-            this.isSelected = true;
-        },
+			// Head Color
 
-        deselect : function() {
-            this.isSelected = false;
-        },
-    });
+			// Head Shape
 
-    return Individual;
+			// Eye Color
+
+			// Eye Count
+
+			// Feeler Count
+
+			// Wing Count
+
+			g.popMatrix();
+		},
+
+		// Is this being clicked on?
+		getDistanceTo : function(target) {
+			return this.center.getDistanceTo(target);
+		},
+
+		select : function() {
+			this.isSelected = true;
+		},
+
+		deselect : function() {
+			this.isSelected = false;
+		},
+	});
+
+	return Individual;
 });

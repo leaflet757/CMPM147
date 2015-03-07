@@ -4,88 +4,113 @@
 
 define(["common", "../evo/evolution", "./individual"], function(common, Evolution, Individual) {
 
-    function gaussRandom() {
-        var r = 2 * (Math.random() - .5);
-        r *= Math.random();
-        return r;
-    }
+	function gaussRandom() {
+		var r = 2 * (Math.random() - .5);
+		r *= Math.random();
+		return r;
+	}
 
-    var CustomEvo = Evolution.extend({
-        init : function() {
-            this.dnaSize = 35;
-            this.populationSize = 15;
-            this.offset = 0;
-            this.last = 0;
+	var CustomEvo = Evolution.extend({
+		init : function() {
+			this.dnaSize = 12;
+			this.populationSize = 15;
+			this.offset = 0;
+			this.last = 0;
 
-            this._super();
+			this._super();
 
-            this.selectAt(new Vector(0, 0));
-        },
+			this.selectAt(new Vector(0, 0));
+		},
 
-        //==================================================
+		//==================================================
 
-        // A thing you can modify
-        // TODO: Is this the DNA you want?  Would you rather have an array, or an array of arrays? Or something else?
-        createDNA : function() {
-            var dna = [];
-            for (var i = 0; i < this.dnaSize; i++) {
-                dna[i] = Math.random();
-            }
-            return dna;
-        },
+		// A thing you can modify
+		// Is this the DNA you want?  Would you rather have an array, or an array of arrays? Or something else?
+		createDNA : function() {
+			var dna = [];
+			// hard code FTW!!!
+			dna[0] = randomEven(0,12); 		// [0,12] evens
+			dna[1] = Math.round(Math.random() * 7 + 1); // [1,8]
+			dna[2] = Math.random(); 		// [0,1]
+			dna[3] = Math.round(Math.random() * 3 + 1); // [1,4]
+			dna[4] = Math.round(Math.random() * 6); 	// enum [0,6]
+			dna[5] = Math.random(); 		// [0,1]
+			dna[6] = Math.round(Math.random() * 6); 	// enum [0,6]
+			dna[7] = Math.random(); 		// [0,1]
+			dna[8] = Math.round(Math.random() * 7 + 1); // [1,8]
+			dna[9] = Math.random(); 		// [0,1]
+			dna[10] = randomEven(0,6); 		// [0,6] evens
+			dna[11] = randomEven(0,4); 		// [0,4] evens
 
-        // A way to turn the thing you can modify
-        //  into the thing you can judge TODO, modify the individual.js file
-        instantiate : function(dna, index) {
+			return dna;
+		},
 
-            var obj = new Individual(dna, index);
-            return obj;
-        },
+		// A way to turn the thing you can modify
+		//  into the thing you can judge, modify the individual.js file
+		instantiate : function(dna, index) {
 
-        // Draw all the individuals (a way to judge the thing)
-        draw : function(g) {
-            this._super(g);
-        },
+			var obj = new Individual(dna, index);
+			return obj;
+		},
 
-        // Select the thing at the target (for picking with mouse interaction)
-        selectAt : function(target) {
-            this._super(target);
-            console.log(this.selected);
+		// Draw all the individuals (a way to judge the thing)
+		draw : function(g) {
+			this._super(g);
+		},
 
-            if (this.selected) {
-                this.spawnFromSelected();
-            }
-        },
+		// Select the thing at the target (for picking with mouse interaction)
+		selectAt : function(target) {
+			this._super(target);
+			//console.log(this.selected);
 
-        // Helpers
-        // TODO: If you change the DNA, you should also be able to change
-        cloneDNA : function(dna) {
-            var clone = [];
-            for (var i = 0; i < dna.length; i++) {
-                clone[i] = dna[i];
-            }
-            return clone;
-        },
+			if (this.selected) {
+				this.spawnFromSelected();
+			}
+		},
 
-        // TODO: Is this the DNA you want?  Would you rather have an array, or an array of arrays? Or something else?
-        modifyDNA : function(dna, amt) {
-            for (var i = 0; i < dna.length; i++) {
+		// Helpers
+		// If you change the DNA, you should also be able to change
+		cloneDNA : function(dna) {
+			var clone = [];
+			for (var i = 0; i < dna.length; i++) {
+				clone[i] = dna[i];
+			}
+			return clone;
+		},
 
-                if (Math.random() > .5) {
-                    dna[i] += 2 * Math.sin(300 * Math.random()) * amt;
-                    dna[i] = Math.min(Math.max(0, dna[i]), 1);
+		// Is this the DNA you want?  Would you rather have an array, or an array of arrays? Or something else?
+		modifyDNA : function(dna, amt) {
+			if (Math.random() > .5) {
+				dna[0] = randomEven(0,12); 		// [0,12] evens
+				dna[1] = Math.round(Math.random() * 7 + 1); // [1,8]
+				dna[2] = Math.random(); 		// [0,1]
+				dna[3] = Math.round(Math.random() * 3 + 1); // [1,4]
+				dna[4] = Math.round(Math.random() * 6); 	// enum [0,6]
+				dna[5] = Math.random(); 		// [0,1]
+				dna[6] = Math.round(Math.random() * 6); 	// enum [0,6]
+				dna[7] = Math.random(); 		// [0,1]
+				dna[8] = Math.round(Math.random() * 7 + 1); // [1,8]
+				dna[9] = Math.random(); 		// [0,1]
+				dna[10] = randomEven(0,6); 		// [0,6] evens
+				dna[11] = randomEven(0,4); 		// [0,4] evens
+			}
+		},
 
-                    dna[i] = (dna[i] - .5) * .99 + .5;
-                }
-            }
-        },
+		// Update all the simulations
+		update : function(time) {
+			this._super(time);
 
-        // Update all the simulations
-        update : function(time) {
-            this._super(time);
-
-        },
-    });
-    return CustomEvo;
+		},
+	});
+	return CustomEvo;
 
 });
+
+function randomEven(min, max) {
+	var number = Math.round(Math.random() * (max - min) + min);
+	while ((number % 2) != 0) {
+		number = Math.round(Math.random() * (max - min) + min);
+	}
+	//console.log(number);
+	return number;
+}
