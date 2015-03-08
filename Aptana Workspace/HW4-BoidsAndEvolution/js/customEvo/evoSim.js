@@ -33,14 +33,14 @@ define(["common", "../evo/evolution", "./individual"], function(common, Evolutio
 			dna[1] = Math.round(Math.random() * 7 + 1); // [1,8]
 			dna[2] = Math.random(); 		// [0,1]
 			dna[3] = Math.round(Math.random() * 3 + 1); // [1,4]
-			dna[4] = Math.round(Math.random() * 6); 	// enum [0,6]
+			dna[4] = Math.round(Math.random() * 3 + 3); 	// enum [3,6]
 			dna[5] = Math.random(); 		// [0,1]
-			dna[6] = Math.round(Math.random() * 6); 	// enum [0,6]
+			dna[6] = Math.round(Math.random() * 3 + 3); 	// enum [3,6]
 			dna[7] = Math.random(); 		// [0,1]
 			dna[8] = Math.round(Math.random() * 7 + 1); // [1,8]
 			dna[9] = Math.random(); 		// [0,1]
 			dna[10] = randomEven(0,6); 		// [0,6] evens
-			dna[11] = randomEven(0,4); 		// [0,4] evens
+			dna[11] = Math.round(Math.random() * 4); 		// [0,4] 
 
 			return dna;
 		},
@@ -82,17 +82,17 @@ define(["common", "../evo/evolution", "./individual"], function(common, Evolutio
 		modifyDNA : function(dna, amt) {
 			if (Math.random() > .5) {
 				dna[0] = randomEven(0,12); 		// [0,12] evens
-				dna[1] = Math.round(Math.random() * 7 + 1); // [1,8]
-				dna[2] = Math.random(); 		// [0,1]
-				dna[3] = Math.round(Math.random() * 3 + 1); // [1,4]
-				dna[4] = Math.round(Math.random() * 6); 	// enum [0,6]
-				dna[5] = Math.random(); 		// [0,1]
-				dna[6] = Math.round(Math.random() * 6); 	// enum [0,6]
-				dna[7] = Math.random(); 		// [0,1]
-				dna[8] = Math.round(Math.random() * 7 + 1); // [1,8]
-				dna[9] = Math.random(); 		// [0,1]
-				dna[10] = randomEven(0,6); 		// [0,6] evens
-				dna[11] = randomEven(0,4); 		// [0,4] evens
+			dna[1] = Math.round(Math.random() * 7 + 1); // [1,8]
+			dna[2] = Math.random(); 		// [0,1]
+			dna[3] = Math.round(Math.random() * 3 + 1); // [1,4]
+			dna[4] = Math.round(Math.random() * 3 + 3); 	// enum [3,6]
+			dna[5] = Math.random(); 		// [0,1]
+			dna[6] = Math.round(Math.random() * 3 + 3); 	// enum [3,6]
+			dna[7] = Math.random(); 		// [0,1]
+			dna[8] = Math.round(Math.random() * 7 + 1); // [1,8]
+			dna[9] = Math.random(); 		// [0,1]
+			dna[10] = randomEven(0,6); 		// [0,6] evens
+			dna[11] = Math.round(Math.random() * 4);  		// [0,4] 
 			}
 		},
 
