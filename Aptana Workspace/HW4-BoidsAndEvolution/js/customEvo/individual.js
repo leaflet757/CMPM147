@@ -22,6 +22,7 @@ define(["common"], function(common) {
 
 		},
 
+		// super embarrassing drawing code, DONT LOOK AT ME!!!
 		draw : function(g) {
 			// Move to the right square
 			g.pushMatrix();
@@ -38,6 +39,55 @@ define(["common"], function(common) {
 			var legSeg = this.dna[1];
 			var center = new Vector(0, 0);
 			
+			g.pushMatrix();
+			var legSpan = 25/legCount;
+			center.setTo(0,-25);
+			var sepporationAngle = (Math.PI/6) / legCount;
+			g.rotate(Math.PI/12);
+			center.translateTo(g);
+			
+			for (var n = 0; n < legCount; n++) {
+				center.setTo(0,legSpan*2);
+				g.rotate(-sepporationAngle);
+				center.translateTo(g);
+				// left legs
+				g.pushMatrix();
+				var segLength = 25/legSeg;
+				for (var i = 0; i < legSeg; i++) {
+				g.fill(this.dna[2], 1, (i/legSeg));
+				center.setTo(-segLength*3/2,0);
+				center.translateTo(g);
+				g.ellipse(0,0,segLength, 3);
+				
+			}
+			g.popMatrix();
+			
+			}
+			g.popMatrix();
+			g.pushMatrix();
+			center.setTo(0,-25);
+			
+			g.rotate(-Math.PI/12);
+			center.translateTo(g);
+			
+			for (var n = 0; n < legCount; n++) {
+			center.setTo(0,legSpan*2);
+			
+				g.rotate(sepporationAngle);
+				center.translateTo(g);
+			// right legs
+				g.pushMatrix();
+			for (var i = 0; i < legSeg; i++) {
+				g.fill(this.dna[2], 1, (i/legSeg));
+				center.setTo(segLength*3/2,0);
+				center.translateTo(g);
+				g.rotate(0);
+				g.ellipse(0,0,segLength, 3);
+				
+			}
+			g.popMatrix();
+			}
+			g.popMatrix();
 			
 			
 			// Move to HEad
