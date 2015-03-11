@@ -19,7 +19,7 @@ define(["common", "../particles/particle"], function(common, Particle) {
 			//console.log('boid spawned');
 			
 			this.setTo(position);
-			//this.acceleration = new Vector(this);
+			this.acceleration = new Vector(this);
 			this.velocity.setToPolar(this.INITIAL_SPEED, startingDirection);
 			//this.color = cellColor.clone();
 			//this.color.h = (this.color.h + Math.random() * 0.08 + 0.42) % 1;
@@ -36,11 +36,13 @@ define(["common", "../particles/particle"], function(common, Particle) {
 		},
 		
 		updatePosition : function(time) {
-			this._super(time);			//this.acceleration.setToDifference(app.mouse, this);
+			this._super(time);			this.acceleration.setToDifference(app.mouse, this);
 			
 			
-			//this.velocity.addMultiple(this.acceleration, time.elapsed);
-			//this.addMultiple(this.velocity, time.elapsed);
+			this.velocity.addMultiple(this.acceleration, time.elapsed);
+			this.velocity.normalize();
+			this.velocity.mult(this.INITIAL_SPEED);
+			this.addMultiple(this.velocity, time.elapsed);
 		},
 
 		// Boid Methods

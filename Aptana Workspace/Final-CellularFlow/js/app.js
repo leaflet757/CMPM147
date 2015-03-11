@@ -249,6 +249,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 					break;
 				case 'R':
 					app.grid.reset();
+					app.flockManager.reset();
 					break;
 				case '1':
 

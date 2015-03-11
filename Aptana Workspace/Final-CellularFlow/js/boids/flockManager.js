@@ -27,6 +27,10 @@ define(["common", "./boidFlock"], function(common, boidFlock) {
 				this.flocks[this.flocks.length] = new boidFlock(cell.position, cell.size, cell.color);
 			}
 		},
+		
+		reset : function() {
+			this.flocks = [];
+		},
 	});
 
 	return FlockManager;
