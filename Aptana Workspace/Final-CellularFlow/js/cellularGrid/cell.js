@@ -28,6 +28,7 @@ define(["inheritance", "common"], function(_inheritance, common) {
 
 		reset : function() {
 			this.size = this.STATIC_SIZE;
+			this.removeChildren();
 		},
 
 		update : function(time) {

@@ -33,12 +33,22 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 		mouse : new Vector(),
 		prevMouse : new Vector(),
 		mouseIsDown : false,
+		firstClick : true,
+		draggins : false,
 		dimensions : new Vector(),
 
 		// Final project data members
 		clearBackground : false,
 		useFade : true,
-		drawCells : true,
+		drawCells : false,
+		// Instructions
+		startText : "Click and drag.\nESC to view options.",
+		optionText : "P: Pause.\nF: Fade colors over time.\nC: Clear screen.\nM: UNIMPLENENTED\nN: UNIMPLENENTED\nD: Draw Cells.\nR: Reset Cells.",
+		textSize : 36,
+		textAlpha : 1,
+		drawOpenningText : true,
+		drawMenu : false,
+		menuOpen : false,
 
 		init : function() {
 			//  app.threeScene = new ThreeScene($("#threeview"));
@@ -71,7 +81,11 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				// creating the grid
 				app.grid = new cellGrid();
 				console.log(app.grid);
-				
+
+				// create the font
+				app.textFont = g.createFont("Brush Script MT", app.textSize);
+				app.menuFont = g.createFont("Arial", app.textSize - 10);
+
 				// create the boids
 
 				g.draw = function() {
@@ -101,6 +115,30 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 					if (app.drawCells) {
 						app.grid.draw(g);
 					}
+
+					// draw any text or ui
+					if (app.drawOpenningText && !app.menuOpen) {
+						g.fill(0.8, 0.5, 0.5, app.textAlpha);
+						g.textFont(app.textFont);
+						g.textSize(app.textSize);
+						g.textAlign(g.CENTER, g.CENTER);
+						g.text(app.startText, app.dimensions.x / 2, app.dimensions.y / 2);
+					}
+					if (app.firstClick) {
+						app.grid.drawSelected(g);
+						if (!app.dragging && !app.menuOpen) {
+							app.drawOpenningText = true;
+						}
+					}
+					// draw the menu if ESC is clicked
+					if (app.drawMenu) {
+						g.fill(0, 0, 0.6, 0.1);						g.rect(app.dimensions.x / 2 - 210, app.dimensions.y / 2 - 150, 420, 300, 30);
+						g.fill(0.8, 0.5, 0.5, app.textAlpha);
+						g.textFont(app.menuFont);
+						g.textSize(app.textSize);
+						g.textAlign(g.CENTER, g.CENTER);
+						g.text(app.optionText, app.dimensions.x / 2, app.dimensions.y / 2);
+					}
 				};
 			});
 			this.initUI();
@@ -126,6 +164,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				//console.log(x + " " + y);
 				app.prevMouse.setTo(app.mouse.x, app.mouse.y);
 				app.mouse.setTo(x, y);
+				app.drawOpenningText = false;
 			});
 
 			// using the event helper
@@ -141,6 +180,14 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 			$('#app').mouseup(function(event) {
 				app.mouseIsDown = false;
 				app.grid.findInfluence();
+				app.dragging = false;
+				if (app.firstClick) {
+					app.clearBackground = true;
+					console.log('test');
+					app.firstClick = false;
+					app.drawOpenningText = false;
+					app.drawCells = true;
+				}
 			});
 
 			$("#app").draggable({
@@ -149,10 +196,12 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				},
 
 				drag : function(event, ui) {
+					app.dragging = true;
 					var x = $('#dragPos').offset().left;
 					var y = $('#dragPos').offset().top;
 					app.grid.expandCell(app.mouse);
 					//console.log(x, y);
+					app.drawOpenningText = false;
 					// TODO:
 					// test if you can find influence here without lagging
 					// app.grid.findInfluence();
@@ -162,7 +211,13 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 			$(document).keydown(function(e) {
 
 				var key = String.fromCharCode(e.keyCode);
-				console.log(e.keyCode);
+				console.log(key, e.keyCode);
+
+				// escape key pressed
+				if (e.keyCode == 27) {
+					app.drawMenu = !app.drawMenu;
+					app.menuOpen = !app.menuOpen;
+				}
 
 				switch(key) {
 				case 'P':

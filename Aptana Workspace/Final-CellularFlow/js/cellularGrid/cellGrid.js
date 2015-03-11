@@ -92,6 +92,12 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 				}
 			}
 		},
+		
+		drawSelected : function(g) {
+			if (this.selected) {
+				this.selected.draw(g);
+			}
+		},
 
 		expandCell : function(mousePos) {
 			if (this.selected != null) {
