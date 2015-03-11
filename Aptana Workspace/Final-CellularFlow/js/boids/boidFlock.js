@@ -12,7 +12,7 @@ define(["common", "./boid"], function(common, Boid) {
         init : function(startingPosition, cellSize, cellColor) {
 			this.center = new Vector(startingPosition);
 			this.boids = [];
-			var totalBoids = 2 + Math.round((cellSize / this.SPAWN_RATE)); // at minimum spawns 4
+			var totalBoids = 3 + Math.round((cellSize / this.SPAWN_RATE)); // at minimum spawns 4
 			var angleGap = (2 * Math.PI) / totalBoids;
 			console.log(angleGap, totalBoids);
 			var startingDirection = this.center.getAngleTo(app.mouse);

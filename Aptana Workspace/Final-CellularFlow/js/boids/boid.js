@@ -21,8 +21,9 @@ define(["common", "../particles/particle"], function(common, Particle) {
 			this.setTo(position);
 			//this.acceleration = new Vector(this);
 			this.velocity.setToPolar(this.INITIAL_SPEED, startingDirection);
-			this.color = cellColor.clone();
-			this.color.h = (this.color.h + Math.random() * 0.08 + 0.42) % 1;
+			//this.color = cellColor.clone();
+			//this.color.h = (this.color.h + Math.random() * 0.08 + 0.42) % 1;
+			this.color = new common.KColor(cellColor.h + Math.random() * 0.08 + 0.42, 1,1, 0.2);
 		},
 		
 		draw : function(g) {
