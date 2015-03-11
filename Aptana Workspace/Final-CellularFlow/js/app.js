@@ -5,7 +5,7 @@
 var app = {};
 
 // A holder for lots of app-related functionality
-define(["processing", "./threeUtils/threeScene", "common", "./particles/particle", "./customGrids", "./cellularGrid/cellGrid"], function(_processing, ThreeScene, common, Particle, customGrids, cellGrid) {
+define(["processing", "./threeUtils/threeScene", "common", "./particles/particle", "./customGrids", "./cellularGrid/cellGrid", "./boids/flockManager"], function(_processing, ThreeScene, common, Particle, customGrids, cellGrid, FlockManager) {
 	'use strict';
 
 	// A little time object to keep track of the current time,
@@ -82,11 +82,12 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				app.grid = new cellGrid();
 				console.log(app.grid);
 
+				// create the boids
+				app.flockManager = new FlockManager();
+
 				// create the font
 				app.textFont = g.createFont("Brush Script MT", app.textSize);
 				app.menuFont = g.createFont("Arial", app.textSize - 10);
-
-				// create the boids
 
 				g.draw = function() {
 					// Update time
@@ -111,6 +112,11 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 						app.updateTimer = 0;
 						//app.grid.update(app.time);
 					}
+					
+					// draw the boids
+					app.flockManager.update(app.time);
+					app.flockManager.draw(g);
+					
 					// draw the cells
 					if (app.drawCells) {
 						app.grid.draw(g);
@@ -133,7 +139,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 					// draw the menu if ESC is clicked
 					if (app.drawMenu) {
 						g.fill(0, 0, 0.6, 0.1);						g.rect(app.dimensions.x / 2 - 210, app.dimensions.y / 2 - 150, 420, 300, 30);
-						g.fill(0.8, 0.5, 0.5, app.textAlpha);
+						g.fill(0, 0, 0, app.textAlpha);
 						g.textFont(app.menuFont);
 						g.textSize(app.textSize);
 						g.textAlign(g.CENTER, g.CENTER);
@@ -181,9 +187,9 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				app.mouseIsDown = false;
 				app.grid.findInfluence();
 				app.dragging = false;
+				app.flockManager.spawnFlockAtCell(app.grid.selected);
 				if (app.firstClick) {
-					app.clearBackground = true;
-					console.log('test');
+					//app.clearBackground = true;
 					app.firstClick = false;
 					app.drawOpenningText = false;
 					app.drawCells = true;

@@ -8,6 +8,7 @@ define(["inheritance", "common"], function(_inheritance, common) {
 
 		// Static Variables
 		STATIC_SIZE : 3,
+		SPAWN_SIZE : 30,
 
 		init : function(x, y, row, col) {
 			this.ROW_ID = row;
@@ -18,6 +19,7 @@ define(["inheritance", "common"], function(_inheritance, common) {
 			this.position = new Vector(x, y);
 			this.size = this.STATIC_SIZE;
 			this.flow = new Vector(0,0);
+			this.hasGivenBirth = false;
 		},
 
 		expand : function(mousePos) {
@@ -58,7 +60,7 @@ define(["inheritance", "common"], function(_inheritance, common) {
 		findInfluenceVector : function(cell) {
 			var dist = cell.position.getDistanceToIgnoreZ(this.position);
 			var y = this.size - dist;
-			console.log(y);
+			//console.log('vector influence', y);
 			// TODO: might not be correct
 			//var vec = new Vector(cell.position.x - this.position.x, cell.position.y - this.position.y);
 			var vec = new Vector(cell.position.x - this.position.x, this.position.y - cell.position.y);
