@@ -14,13 +14,15 @@ define(["common", "../particles/particle"], function(common, Particle) {
 		
 		// Particle Methods
 		//============================================
-		init : function(position, startingDirection) {
+		init : function(position, startingDirection, cellColor) {
 			this._super();
 			//console.log('boid spawned');
 			
 			this.setTo(position);
+			//this.acceleration = new Vector(this);
 			this.velocity.setToPolar(this.INITIAL_SPEED, startingDirection);
-			this.color = new common.KColor(0, 1, 0.5, 0.5); 
+			this.color = cellColor.clone();
+			this.color.h = (this.color.h + Math.random() * 0.08 + 0.42) % 1;
 		},
 		
 		draw : function(g) {
@@ -33,8 +35,11 @@ define(["common", "../particles/particle"], function(common, Particle) {
 		},
 		
 		updatePosition : function(time) {
-			this._super(time);
+			this._super(time);			//this.acceleration.setToDifference(app.mouse, this);
 			
+			
+			//this.velocity.addMultiple(this.acceleration, time.elapsed);
+			//this.addMultiple(this.velocity, time.elapsed);
 		},
 
 		// Boid Methods

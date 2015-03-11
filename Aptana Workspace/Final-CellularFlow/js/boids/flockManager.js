@@ -24,7 +24,7 @@ define(["common", "./boidFlock"], function(common, boidFlock) {
 		spawnFlockAtCell : function(cell) {
 			if (cell.size >= cell.SPAWN_SIZE && !cell.hasGivenBirth) {
 				cell.hasGivenBirth = true;
-				this.flocks[this.flocks.length] = new boidFlock(cell.position, cell.size);
+				this.flocks[this.flocks.length] = new boidFlock(cell.position, cell.size, cell.color);
 			}
 		},
 	});

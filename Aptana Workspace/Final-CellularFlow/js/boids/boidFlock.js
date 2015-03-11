@@ -9,7 +9,7 @@ define(["common", "./boid"], function(common, Boid) {
     	
     	SPAWN_RATE : 20, // pixels per new boid
     	
-        init : function(startingPosition, cellSize) {
+        init : function(startingPosition, cellSize, cellColor) {
 			this.center = new Vector(startingPosition);
 			this.boids = [];
 			var totalBoids = 2 + Math.round((cellSize / this.SPAWN_RATE)); // at minimum spawns 4
@@ -17,7 +17,7 @@ define(["common", "./boid"], function(common, Boid) {
 			console.log(angleGap, totalBoids);
 			var startingDirection = this.center.getAngleTo(app.mouse);
 			for (var i = 0; i < totalBoids; i++) {
-				this.boids[this.boids.length] = new Boid(startingPosition,i*angleGap + startingDirection);
+				this.boids[this.boids.length] = new Boid(startingPosition,i*angleGap + startingDirection, cellColor);
 			}
 			
         },
