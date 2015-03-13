@@ -41,9 +41,10 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 		clearBackground : false,
 		useFade : true,
 		drawCells : false,
+		updateGrid : false,
 		// Instructions
 		startText : "Click and drag.\nESC to view options.",
-		optionText : "P: Pause.\nF: Fade colors over time.\nC: Clear screen.\nM: UNIMPLENENTED\nN: UNIMPLENENTED\nD: Draw Cells.\nR: Reset Cells.",
+		optionText : "P: Pause.\nF: Fade colors over time.\nD: Draw Cells.\nG: Update grid cells.\nM: Increase update rate.\nN: Decrease update rate.\nC: Clear screen.\nR: Reset Cells.",
 		textSize : 36,
 		textAlpha : 1,
 		drawOpenningText : true,
@@ -108,15 +109,17 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 					// Fixed update intervals
 					app.updateTimer += app.time.elapsed;
 					if (app.updateTimer > app.updateRate) {
-						console.log("update " + app.time.frames);
 						app.updateTimer = 0;
-						app.grid.update(app.time);
+						if (app.updateGrid) {
+							console.log("update " + app.time.frames);
+							app.grid.update(app.time);
+						}
 					}
-					
+
 					// draw the boids
 					app.flockManager.update(app.time);
 					app.flockManager.draw(g);
-					
+
 					// draw the cells
 					if (app.drawCells) {
 						app.grid.draw(g);
@@ -138,7 +141,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 					}
 					// draw the menu if ESC is clicked
 					if (app.drawMenu) {
-						g.fill(0, 0, 0.6, 0.1);						g.rect(app.dimensions.x / 2 - 210, app.dimensions.y / 2 - 150, 420, 300, 30);
+						g.fill(0, 0, 0.6, 0.1);						g.rect(app.dimensions.x / 2 - 210, app.dimensions.y / 2 - 170, 420, 300, 30);
 						g.fill(0, 0, 0, app.textAlpha);
 						g.textFont(app.menuFont);
 						g.textSize(app.textSize);
@@ -250,6 +253,9 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				case 'R':
 					app.grid.reset();
 					app.flockManager.reset();
+					break;
+				case 'G':
+					app.updateGrid = !app.updateGrid;
 					break;
 				case '1':
 

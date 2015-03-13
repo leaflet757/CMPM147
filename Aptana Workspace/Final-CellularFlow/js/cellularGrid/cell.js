@@ -15,7 +15,7 @@ define(["inheritance", "common"], function(_inheritance, common) {
 			this.COL_ID = col;
 			this.children = [];
 			this.color = new common.KColor(Math.abs(utilities.noise(x, y)), 0, 0.8, 0.1);
-			this.drawCell = false;
+			this.drawCell = true;
 			//this.color = new common.KColor(Math.abs(utilities.noise(x,y)), 0.5, 1, 0.1);
 			this.position = new Vector(x, y);
 			this.size = this.STATIC_SIZE;
@@ -58,7 +58,7 @@ define(["inheritance", "common"], function(_inheritance, common) {
 
 		removeChildren : function() {
 			for (var i = 0; i < this.children.length; i++) {
-				this.children[i].flow.sub(this.findInfluenceVector(this.children[i]));
+				this.children[i].removeFlow();
 				//console.log(this.children[i].flow);
 			}
 			this.children = [];
@@ -81,7 +81,19 @@ define(["inheritance", "common"], function(_inheritance, common) {
 			vec.normalize();
 			//vec.mult(y);
 			return vec;
-		}
+		},
+		/*
+		copyFrom : function(other) {
+			for (var i = 0 ; i < other.children.length; i++) {
+				console.log(i, other.children[i]);
+				this.children[i].copyFrom(other.children[i]);
+			}
+			this.color = other.color.clone();
+			this.drawCell = other.drawCell;
+			this.size = other.size;
+			this.flow = other.flow.clone();
+			this.hasGivenBirth = other.hasGivenBirth;
+		}*/
 	});
 
 	return Cell;
