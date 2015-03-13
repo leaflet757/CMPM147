@@ -53,8 +53,15 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 		},
 
 		computeNextValue : function(i, j) {
-			// TODO: leave unimplemented for now
-
+			var v = this.getLastValue(i, j);
+            var v0 = this.getLastValue(i + 1, j);
+            var v1 = this.getLastValue(i - 1, j);
+            var v2 = this.getLastValue(i, j - 1);
+            var v3 = this.getLastValue(i, j + 1);
+            var v4 = this.getLastValue(i - 1, j - 1);
+            var v5 = this.getLastValue(i - 1, j + 1);
+            var v6 = this.getLastValue(i + 1, j - 1);
+            var v7 = this.getLastValue(i + 1, j + 1);
 		},
 
 		// applies a transform to the grid
@@ -117,6 +124,7 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 			}
 
 			// Do after-calculation stuff
+			/*
 			if (this.postUpdate) {
 				for (var i = 0; i < this.columns; i++) {
 					for (var j = 0; j < this.rows; j++) {
@@ -124,7 +132,7 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 					}
 				}
 			}
-
+			*/
 		},
 
 		draw : function(g) {
@@ -145,6 +153,19 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 			}
 		},
 
+		getCellFromPosition : function(position) {
+			var theChosenOne;
+			for (var i = 1; i < this.columns; i++) {
+				for (var j = 1; j < this.rows; j++) {
+					var val = this.values[i-1][j - 1];
+					if (position.x > i * this.xSpacing - this.xSpacing / 2 && position.x < i * this.xSpacing + this.xSpacing / 2 && position.y > j * this.ySpacing - this.ySpacing / 2 && position.y < j * this.ySpacing + this.ySpacing / 2) {
+						theChosenOne = val;
+					}
+				}
+			}
+			return theChosenOne;
+		},
+
 		findInfluence : function() {
 			// remove previous influences
 			this.selected.removeChildren();
@@ -155,6 +176,7 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 			var xUpperBound = Math.max(this.selected.ROW_ID + xInf, this.selected.ROW_ID);
 			var yLowerBound = Math.max(0, this.selected.COL_ID - yInf);
 			var yUpperBound = Math.max(this.selected.COL_ID + yInf, this.selected.COL_ID);
+			//console.log(xLowerBound, yLowerBound, xUpperBound, yUpperBound);
 			// console.log(xLowerBound, xUpperBound, yLowerBound, xUpperBound);
 			//	will be Inf +- ROWCOL ID
 			//	for all cells c that are not the selected cell

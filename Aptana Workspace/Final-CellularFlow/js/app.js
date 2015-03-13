@@ -108,9 +108,9 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 					// Fixed update intervals
 					app.updateTimer += app.time.elapsed;
 					if (app.updateTimer > app.updateRate) {
-						//console.log("update " + app.time.frames);
+						console.log("update " + app.time.frames);
 						app.updateTimer = 0;
-						//app.grid.update(app.time);
+						app.grid.update(app.time);
 					}
 					
 					// draw the boids
