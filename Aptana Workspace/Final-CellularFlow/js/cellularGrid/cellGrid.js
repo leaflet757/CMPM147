@@ -19,7 +19,10 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 			console.log("Create grid cell size " + this.cellSize + ", " + this.columns + " x " + this.rows);
 
 			this.values = [];
-			this.lastValues = []; // only saves sizes 
+			this.lastValues = [];
+			// only saves sizes
+			this.cellsForUpdate = [];
+			// stores which cells need to be updated
 
 			for (var i = 0; i < this.columns; i++) {
 				this.values[i] = [];
@@ -51,24 +54,7 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 		},
 
 		computeNextValue : function(i, j) {
-			var neighbors = [this.getLastValue(i + 1, j), this.getLastValue(i - 1, j), this.getLastValue(i, j - 1), this.getLastValue(i, j + 1), this.getLastValue(i + 1, j + 1), this.getLastValue(i - 1, j - 1), this.getLastValue(i - 1, j + 1), this.getLastValue(i + 1, j - 1)];
-			var sumSize = 0;
-			var count = 0;
-			for (var n = 0; n < neighbors.length; n++) {
-				if (neighbors[n] != NaN) {
-					sumSize += neighbors[n];
-					count++;
-				}
-			}
-			count = count > 0 ? count : 1;
-			console.log(sumSize, count);
-			if (sumSize != NaN) {
-				this.values[i][j].size += (sumSize / count);	
-			}
-			else {
-				console.log('i', i, 'j', j, 'sum', sumSize, 'count', count, 'thisvalue', this.values[i][j], 'last avlues', this.lastValues[i][j]);
-			}
-			//this.values[i][j].size += 1;
+
 		},
 
 		// applies a transform to the grid
@@ -121,14 +107,38 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 
 		update : function(time) {
 			// compute the next values
-			for (var i = 0; i < this.columns; i++) {
-				for (var j = 0; j < this.rows; j++) {
-					// save the last values
-					this.lastValues[i][j] = this.values[i][j].size;
-					// compute the next values
-					this.computeNextValue(i, j);
+			for (var i = 0; i < this.cellsForUpdate.length; i++) {
+				var node = this.cellsForUpdate[i];
+				this.lastValues[node.ROW_ID][node.COL_ID] = node.size;
+				var selectedTemp = this.selected;
+				// TODO: expand cell based off of 1/3 of lastValues neighors
+				//var neighbors = [this.getLastValue(node.ROW_ID + 1, node.COL_ID), this.getLastValue(node.ROW_ID - 1, node.COL_ID), this.getLastValue(node.ROW_ID, node.COL_ID - 1), this.getLastValue(node.ROW_ID, node.COL_ID + 1), this.getLastValue(node.ROW_ID + 1, node.COL_ID + 1), this.getLastValue(node.ROW_ID - 1, node.COL_ID - 1), this.getLastValue(node.ROW_ID - 1, node.COL_ID + 1), this.getLastValue(node.ROW_ID + 1, node.COL_ID - 1)];
+				var neighbors = [this.getLastValue(node.ROW_ID + 1, node.COL_ID), this.getLastValue(node.ROW_ID - 1, node.COL_ID), this.getLastValue(node.ROW_ID, node.COL_ID - 1), this.getLastValue(node.ROW_ID, node.COL_ID + 1)];
+				var sum = 0;
+				var count = 0;
+				for (var n = 0; n < neighbors.length; n++) {
+					if (neighbors[n] > 0) {
+						count++;
+					}
+					sum += neighbors[n];
 				}
+				sum = sum / count;
+				//console.log('sum', sum, count, sum/ count);
+				this.selected = node;
+				// this.selected.size = sum;
+				this.selected.expandBySize(sum);
+				//this.findInfluence();
+				this.selected = selectedTemp;
+				//console.log(node);
 			}
+			/* for (var i = 0; i < this.columns; i++) {
+			for (var j = 0; j < this.rows; j++) {
+			// save the last values
+			this.lastValues[i][j] = this.values[i][j].size;
+			// compute the next values
+			this.computeNextValue(i, j);
+			}
+			} */
 
 			// Do after-calculation stuff
 			/*
@@ -143,7 +153,6 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 		},
 
 		draw : function(g) {
-
 			for (var i = 1; i < this.columns; i++) {
 				for (var j = 1; j < this.rows; j++) {
 					this.values[i-1][j - 1].draw(g);
@@ -174,22 +183,41 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 		},
 
 		findInfluence : function() {
-			// remove previous influences
+			// remove previous influences and 'selected' update cells
+			var tempUpdateCells = [];
+			for (var n = 0; n < this.cellsForUpdate.length; n++) {
+				var node = this.cellsForUpdate[n];
+				var notInChildList = true;
+				for (var p = 0; p < this.selected.children.length; p++) {
+					var c = this.selected.children[p];
+					if (c.ROW_ID == node.ROW_ID && c.COL_ID == node.COL_ID) {
+						notInChildList = false;
+						p = this.selected.children.length;
+					}
+				}
+				if (notInChildList) {
+					tempUpdateCells[tempUpdateCells.length] = node;
+				}
+			}
+			//this.cellsForUpdate = [];
+			this.cellsForUpdate = tempUpdateCells;
+
 			this.selected.removeChildren();
+			var cellAdded = false;
 			// find the cells that will be effected
 			var xInf = Math.round(this.selected.size / this.xSpacing);
 			var yInf = Math.round(this.selected.size / this.ySpacing);
 			var xLowerBound = Math.max(0, this.selected.ROW_ID - xInf);
-			var xUpperBound = Math.min(this.selected.ROW_ID + xInf, this.columns);
+			var xUpperBound = Math.min(this.selected.ROW_ID + xInf, this.columns - 1);
 			var yLowerBound = Math.max(0, this.selected.COL_ID - yInf);
-			var yUpperBound = Math.min(this.selected.COL_ID + yInf, this.rows);
-			// console.log(xLowerBound, xUpperBound, yLowerBound, yUpperBound);
+			var yUpperBound = Math.min(this.selected.COL_ID + yInf, this.rows - 1);
+			//console.log(xLowerBound, xUpperBound, yLowerBound, yUpperBound, this.rows, this.columns);
 			// console.log(this.selected.ROW_ID + xInf, this.rows);
 			//	will be Inf +- ROWCOL ID
 			//	for all cells c that are not the selected cell
 			//		c.addInf(selected)
-			for (var i = xLowerBound; i < xUpperBound; i++) {
-				for (var j = yLowerBound; j < yUpperBound; j++) {
+			for (var i = xLowerBound; i <= xUpperBound; i++) {
+				for (var j = yLowerBound; j <= yUpperBound; j++) {
 					var val = this.values[i][j];
 					if (val != this.selected) {
 						var distance = val.position.getDistanceToIgnoreZ(this.selected.position);
@@ -197,11 +225,20 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 						//console.log('printing dist', distance);
 						if (distance <= val.size + this.selected.size && val.size == val.STATIC_SIZE) {
 							this.selected.addChild(val);
-							//console.log('adding');
+							//console.log('adding...', val.ROW_ID, val.COL_ID);
+							// add child cell to update list
+							this.cellsForUpdate[this.cellsForUpdate.length] = val;
+							cellAdded = true;
 						}
 					}
 				}
 			}
+			if (cellAdded) {
+				this.cellsForUpdate[this.cellsForUpdate.length] = this.selected;
+				//console.log('adding selected');
+			}
+			//console.log('selected', this.selected, 'updates', this.cellsForUpdate);
+			//console.log('children', this.selected.children);
 		}
 	});
 

@@ -29,6 +29,12 @@ define(["inheritance", "common"], function(_inheritance, common) {
 			this.size = newDist;
 			this.drawCell = true;
 		},
+		
+		expandBySize : function(size) {
+			this.color.s = size / (200 - this.STATIC_SIZE);
+			this.size = size;
+			this.drawCell = true;
+		},
 
 		reset : function() {
 			this.size = this.STATIC_SIZE;

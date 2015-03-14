@@ -29,7 +29,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 
 	// Lets add some functions to the app object!
 	$.extend(app, {
-		updateRate : .9,
+		updateRate : 2,
 		mouse : new Vector(),
 		prevMouse : new Vector(),
 		mouseIsDown : false,
