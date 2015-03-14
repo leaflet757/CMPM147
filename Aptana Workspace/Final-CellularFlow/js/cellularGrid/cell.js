@@ -15,7 +15,7 @@ define(["inheritance", "common"], function(_inheritance, common) {
 			this.COL_ID = col;
 			this.children = [];
 			this.color = new common.KColor(Math.abs(utilities.noise(x, y)), 0, 0.8, 0.1);
-			this.drawCell = true;
+			this.drawCell = false;
 			//this.color = new common.KColor(Math.abs(utilities.noise(x,y)), 0.5, 1, 0.1);
 			this.position = new Vector(x, y);
 			this.size = this.STATIC_SIZE;
@@ -31,7 +31,7 @@ define(["inheritance", "common"], function(_inheritance, common) {
 		},
 		
 		expandBySize : function(size) {
-			this.color.s = size / (200 - this.STATIC_SIZE);
+			this.color.s = size / (20 - this.STATIC_SIZE);
 			this.size = size;
 			this.drawCell = true;
 		},
@@ -47,7 +47,8 @@ define(["inheritance", "common"], function(_inheritance, common) {
 		},
 
 		draw : function(g) {
-			if (this.drawCell) {
+			//if (this.drawCell) {
+			if (this.drawCell && this.size > this.STATIC_SIZE) {
 				g.noStroke();
 				this.color.fill(g);
 				g.ellipse(this.position.x, this.position.y, this.size, this.size);

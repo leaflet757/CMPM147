@@ -40,14 +40,14 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 		},
 
 		getLastValue : function(i, j) {
-			if (i < 0 || i >= this.rows || j < 0 || j >= this.columns) {
+			if (i < 0 || j >= this.rows || j < 0 || i >= this.columns) {
 				return 0;
 			}
 			return this.lastValues[i][j];
 		},
 
 		getValue : function(i, j) {
-			if (i < 0 || i >= this.rows || j < 0 || j >= this.columns) {
+			if (i < 0 || j >= this.rows || j < 0 || i >= this.columns) {
 				return undefined;
 			}
 			return this.values[i][j];
@@ -111,22 +111,19 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 				var node = this.cellsForUpdate[i];
 				this.lastValues[node.ROW_ID][node.COL_ID] = node.size;
 				var selectedTemp = this.selected;
-				// TODO: expand cell based off of 1/3 of lastValues neighors
+				this.selected = node;
 				//var neighbors = [this.getLastValue(node.ROW_ID + 1, node.COL_ID), this.getLastValue(node.ROW_ID - 1, node.COL_ID), this.getLastValue(node.ROW_ID, node.COL_ID - 1), this.getLastValue(node.ROW_ID, node.COL_ID + 1), this.getLastValue(node.ROW_ID + 1, node.COL_ID + 1), this.getLastValue(node.ROW_ID - 1, node.COL_ID - 1), this.getLastValue(node.ROW_ID - 1, node.COL_ID + 1), this.getLastValue(node.ROW_ID + 1, node.COL_ID - 1)];
 				var neighbors = [this.getLastValue(node.ROW_ID + 1, node.COL_ID), this.getLastValue(node.ROW_ID - 1, node.COL_ID), this.getLastValue(node.ROW_ID, node.COL_ID - 1), this.getLastValue(node.ROW_ID, node.COL_ID + 1)];
-				var sum = 0;
-				var count = 0;
+				var list = [this.getValue(node.ROW_ID + 1, node.COL_ID), this.getValue(node.ROW_ID - 1, node.COL_ID), this.getValue(node.ROW_ID, node.COL_ID - 1), this.getValue(node.ROW_ID, node.COL_ID + 1)];
+				var total = 0;
 				for (var n = 0; n < neighbors.length; n++) {
-					if (neighbors[n] > 0) {
-						count++;
+					if (neighbors[n] > 2 *node.size) {
+						total++;
+						list[n].expandBySize(list[n].size - this.xSpacing/4);
 					}
-					sum += neighbors[n];
 				}
-				sum = sum / count;
-				//console.log('sum', sum, count, sum/ count);
-				this.selected = node;
 				// this.selected.size = sum;
-				this.selected.expandBySize(sum);
+				this.selected.expandBySize(this.selected.size + total * this.xSpacing/4);
 				//this.findInfluence();
 				this.selected = selectedTemp;
 				//console.log(node);
@@ -234,8 +231,11 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 				}
 			}
 			if (cellAdded) {
+				// TODO: shrnk the cell by factor of 1
 				this.cellsForUpdate[this.cellsForUpdate.length] = this.selected;
-				//console.log('adding selected');
+				//this.lastValues[this.selected.ROW_ID][this.selected.COL_ID] = this.selected.size;
+				//this.selected.expandBySize(this.selected.size - xInf);
+				//console.log('adding selected', this.selected.size, this.selected.ROW_ID, this.selected.COL_ID);
 			}
 			//console.log('selected', this.selected, 'updates', this.cellsForUpdate);
 			//console.log('children', this.selected.children);
