@@ -54,9 +54,9 @@ define(["common", "./boid"], function(common, Boid) {
 			for (var i = 0; i < this.boids.length; i++) {
 				this.boids[i].draw(g);
 			}
-			g.fill(Math.random(), 1, 1);
-			g.noStroke();
-			g.ellipse(this.position.x, this.position.y, 10, 10);
+			//g.fill(Math.random(), 1, 1);
+			//g.noStroke();
+			//g.ellipse(this.position.x, this.position.y, 10, 10);
 		},
 
 		getDistanceTo : function(target) {

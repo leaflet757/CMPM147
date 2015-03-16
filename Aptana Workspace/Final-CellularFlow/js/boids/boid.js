@@ -114,15 +114,15 @@ define(["common", "../particles/particle"], function(common, Particle) {
 					//console.log(this.forces.cohesion);
 					this.forces.cohesion.setTo(this.forces.cohesion.x - this.x, this.forces.cohesion.y - this.y);
 					//console.log('yes', this.forces.cohesion);
-					this.forces.cohesion.normalize();
-					this.forces.alignment.normalize();
+					//this.forces.cohesion.normalize();
+					//this.forces.alignment.normalize();
 					this.forces.separation.mult(-1);
-					this.forces.separation.normalize();
+					//this.forces.separation.normalize();
 					//console.log(this.forces);
 					// multiply forces to make them feel right
 					//this.forces.alignment.mult(3);
-					//this.forces.cohesion.mult(3);
-					//this.forces.separation.mult(3);
+					this.forces.cohesion.mult(2);
+					this.forces.separation.mult(3);
 
 				}
 
@@ -130,13 +130,15 @@ define(["common", "../particles/particle"], function(common, Particle) {
 				// Move to the center if it gets too far off
 				this.forces.border.mult(0);
 				var d = this.getDistanceToIgnoreZ(this.flockTarget);
-				var range = app.dimensions.y * 2/3;
+				//console.log(d);
+				var range = app.dimensions.y * 2 / 3;
 				if (d > range) {
+					//console.log('hout range');
 					var distOutsideOfRange = d - range;
 					//this.forces.border.addMultiple(this, .2 * Math.pow(distOutsideOfRange, 1.22) / d);
 					this.forces.border.add(this.flockTarget);
 					this.forces.border.normalize();
-					this.forces.border.mult(1);
+					this.forces.border.mult(50);
 					//console.log('outofrange', d);
 				}
 
@@ -168,10 +170,11 @@ define(["common", "../particles/particle"], function(common, Particle) {
 					//console.log(cell.flow, temp); // - dist / (4 *cell.size)
 					this.velocity.setTo(temp);
 					//this.velocity.add(cell.flow);
-					this.velocity.normalize();
-					this.velocity.mult(this.INITIAL_SPEED);
 				}
 			}
+
+			this.velocity.normalize();
+			this.velocity.mult(this.INITIAL_SPEED);
 
 		},
 
