@@ -119,7 +119,7 @@ define(["inheritance", "common", "./cell"], function(_inheritance, common, cell)
 				for (var n = 0; n < neighbors.length; n++) {
 					if (neighbors[n] > 2 *node.size) {
 						total++;
-						list[n].expandBySize(list[n].size - this.xSpacing/4);
+						list[n].expandBySize(list[n].size - this.xSpacing/8);
 					}
 				}
 				// this.selected.size = sum;

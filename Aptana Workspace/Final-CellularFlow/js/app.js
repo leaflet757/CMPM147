@@ -102,7 +102,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 
 					// Fading background
 					if (app.useFade) {
-						g.fill(0, 0, 0, 0.05);
+						g.fill(0, 0, 0, 0.01);
 						g.rect(0, 0, w, h);
 					}
 
