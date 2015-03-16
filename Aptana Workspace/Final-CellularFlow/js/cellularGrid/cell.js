@@ -15,7 +15,7 @@ define(["inheritance", "common"], function(_inheritance, common) {
 			this.COL_ID = col;
 			this.children = [];
 			this.color = new common.KColor(Math.abs(utilities.noise(x, y)), 0, 0.8, 0.1);
-			this.drawCell = false;
+			this.drawCell = true;
 			//this.color = new common.KColor(Math.abs(utilities.noise(x,y)), 0.5, 1, 0.1);
 			this.position = new Vector(x, y);
 			this.size = this.STATIC_SIZE;

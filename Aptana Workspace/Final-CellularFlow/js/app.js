@@ -42,9 +42,10 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 		useFade : true,
 		drawCells : false,
 		updateGrid : false,
+		followFlock : false,
 		// Instructions
 		startText : "Click and drag.\nESC to view options.",
-		optionText : "P: Pause.\nF: Fade colors over time.\nD: Draw Cells.\nG: Update grid cells.\nM: Increase update rate.\nN: Decrease update rate.\nC: Clear screen.\nR: Reset Cells.",
+		optionText : "P: Pause.\nF: Fade colors over time.\nS: Enable Flocking.\nD: Draw Cells.\nG: Update grid cells.\nM: Increase update rate.\nN: Decrease update rate.\nC: Clear screen.\nR: Reset Cells.",
 		textSize : 36,
 		textAlpha : 1,
 		drawOpenningText : true,
@@ -82,6 +83,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 				// creating the grid
 				app.grid = new cellGrid();
 				console.log(app.grid);
+				console.log('Dimensions:', w, h);
 
 				// create the boids
 				app.flockManager = new FlockManager();
@@ -141,7 +143,7 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 					}
 					// draw the menu if ESC is clicked
 					if (app.drawMenu) {
-						g.fill(0, 0, 0.6, 0.1);						g.rect(app.dimensions.x / 2 - 210, app.dimensions.y / 2 - 170, 420, 300, 30);
+						g.fill(0, 0, 0.6, 0.1);						g.rect(app.dimensions.x / 2 - 210, app.dimensions.y / 2 - 150, 420, 300, 30);
 						g.fill(0, 0, 0, app.textAlpha);
 						g.textFont(app.menuFont);
 						g.textSize(app.textSize);
@@ -256,6 +258,9 @@ define(["processing", "./threeUtils/threeScene", "common", "./particles/particle
 					break;
 				case 'G':
 					app.updateGrid = !app.updateGrid;
+					break;
+				case 'S':
+					app.followFlock = !app.followFlock;
 					break;
 				case '1':
 

@@ -23,21 +23,40 @@ define(["common", "./boid"], function(common, Boid) {
 				var finish = start + twist;
 				this.boids[this.boids.length] = new Boid(this, startingPosition, start, finish, cellColor);
 			}
+			this.position = new Vector(startingPosition);
+			this.targetPosition = new Vector();
+			this.velocity = new Vector();
+			this.findNewTarget();
+			this.targetRadius = 30;
+			this.neighborRange = 100;
+		},
 
+		findNewTarget : function() {
+			this.targetPosition.setTo(Math.random() * (app.dimensions.x - 30) + 30, Math.random() * (app.dimensions.y - 30) + 30);
+			this.velocity.setToPolar(50, this.targetPosition.getAngleTo(this.position));
 		},
 
 		update : function(time) {
 			for (var i = 0; i < this.boids.length; i++) {
+				this.boids[i].findNeighbors(this.boids);
+				this.boids[i].updateForces(time);
 				this.boids[i].updatePosition(time);
 			}
-
+			
+			// update the flock position
+			if (this.position.getDistanceToIgnoreZ(this.targetPosition) < this.targetRadius) {
+				this.findNewTarget();
+			}
+			this.position.addMultiple(this.velocity, time.elapsed);
 		},
 
 		draw : function(g) {
 			for (var i = 0; i < this.boids.length; i++) {
 				this.boids[i].draw(g);
 			}
-
+			g.fill(Math.random(), 1, 1);
+			g.noStroke();
+			g.ellipse(this.position.x, this.position.y, 10, 10);
 		},
 
 		getDistanceTo : function(target) {
