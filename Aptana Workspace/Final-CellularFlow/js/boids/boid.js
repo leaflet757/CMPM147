@@ -165,7 +165,7 @@ define(["common", "../particles/particle"], function(common, Particle) {
 				var cell = app.grid.getCellFromPosition(this);
 				//console.log(cell);
 				if (cell != undefined && cell.flow.x != 0 && cell.flow.y != 0) {
-					var dist = this.getDistanceToIgnoreZ(cell.position);
+					// var dist = this.getDistanceToIgnoreZ(cell.position);
 					var temp = this.velocity.lerp(cell.flow, .85);
 					//console.log(cell.flow, temp); // - dist / (4 *cell.size)
 					this.velocity.setTo(temp);
